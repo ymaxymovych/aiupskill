@@ -37,16 +37,16 @@ export default function Home() {
         <ProblemBlock />
         {/* 5. Міст: "AI Upskill працює інакше" */}
         <BridgeSection />
-        {/* 6. Будь-яка посада з клавіатурою */}
-        <KeyboardJobsSection />
-        {/* 7. ChatGPT vs AI-агент */}
-        <NotChatGPT />
-        {/* 8. Чому після курсу самі хочуть автоматизувати */}
-        <PotentialResourceSection />
-        {/* 9. Конкурентний тиск */}
-        <CompetitivePressureSection />
-        {/* 10. AI-аудит */}
+        {/* 6. AI-аудит */}
         <AuditWizard />
+        {/* 7. Будь-яка посада з клавіатурою */}
+        <KeyboardJobsSection />
+        {/* 8. ChatGPT vs AI-агент */}
+        <NotChatGPT />
+        {/* 9. Чому після курсу самі хочуть автоматизувати */}
+        <PotentialResourceSection />
+        {/* 10. Конкурентний тиск */}
+        <CompetitivePressureSection />
         {/* 11. Калькулятор продуктивності */}
         <ProductivityCalculator />
         {/* 12. 5 модулів */}
