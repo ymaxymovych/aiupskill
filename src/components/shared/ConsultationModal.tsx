@@ -177,24 +177,28 @@ export function ConsultationModal({ open, onClose }: Props) {
                     <label className="text-gray-600 text-sm block mb-1">Ім&apos;я *</label>
                     <input type="text" required value={form.name}
                       onChange={(e) => setForm({ ...form, name: e.target.value })}
+                      autoComplete="name"
                       className="input-field" placeholder="Ваше ім'я" />
                   </div>
                   <div>
                     <label className="text-gray-600 text-sm block mb-1">Email *</label>
                     <input type="email" required value={form.email}
                       onChange={(e) => setForm({ ...form, email: e.target.value })}
+                      autoComplete="email"
                       className="input-field" placeholder="email@company.com" />
                   </div>
                   <div>
                     <label className="text-gray-600 text-sm block mb-1">Телефон</label>
                     <input type="tel" value={form.phone}
                       onChange={(e) => setForm({ ...form, phone: e.target.value })}
+                      autoComplete="tel"
                       className="input-field" placeholder="+380..." />
                   </div>
                   <div>
                     <label className="text-gray-600 text-sm block mb-1">Сайт компанії</label>
                     <input type="url" value={form.website}
                       onChange={(e) => setForm({ ...form, website: e.target.value })}
+                      autoComplete="url"
                       className="input-field" placeholder="https://yourcompany.com" />
                   </div>
                   <div>

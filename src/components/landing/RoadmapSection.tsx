@@ -20,7 +20,7 @@ export default function RoadmapSection() {
             isVisible && "visible"
           )}
         >
-          Як перевести компанію на AI
+          Як перевести компанію на AI:
         </h2>
 
         {/* Step 1 */}

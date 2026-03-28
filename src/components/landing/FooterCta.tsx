@@ -174,6 +174,7 @@ export default function FooterCta() {
                 onChange={(e) =>
                   setForm((f) => ({ ...f, name: e.target.value }))
                 }
+                autoComplete="name"
                 className={cn(
                   "input-field",
                   errors.name && "!border-error"
@@ -191,6 +192,7 @@ export default function FooterCta() {
                 onChange={(e) =>
                   setForm((f) => ({ ...f, contact: e.target.value }))
                 }
+                autoComplete="email"
                 className={cn(
                   "input-field",
                   errors.contact && "!border-error"
@@ -219,6 +221,7 @@ export default function FooterCta() {
             onChange={(e) =>
               setForm((f) => ({ ...f, companyUrl: e.target.value }))
             }
+            autoComplete="url"
             className="input-field"
           />
 

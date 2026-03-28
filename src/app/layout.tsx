@@ -9,14 +9,14 @@ const onest = Onest({
 });
 
 export const metadata: Metadata = {
-  title: "Впровадження AI в бізнес — навчи команду за 2 тижні | AI Upskill",
+  title: "Впровадження AI в бізнес — навчи команду за 5 днів | AI Upskill",
   description:
-    "Кожен співробітник побудує AI-автоматизацію для своєї посади. 6 модулів, 20 годин, живе навчання. Від $79/людину. Безкоштовна консультація.",
+    "Кожен співробітник побудує AI-автоматизацію для своєї посади. 5 модулів, 10 годин, живе навчання. Безкоштовна консультація.",
   metadataBase: new URL("https://aiupskill.live"),
   openGraph: {
-    title: "AI Upskill — Впровадь AI у свою компанію за 2 тижні",
+    title: "AI Upskill — Впровадь AI у свою компанію за 5 днів",
     description:
-      "Кожен співробітник побудує працюючу AI-автоматизацію. 5x продуктивність. Від $79.",
+      "Кожен співробітник побудує працюючу AI-автоматизацію. 5x продуктивність.",
     url: "https://aiupskill.live",
     siteName: "AI Upskill",
     type: "website",
@@ -24,9 +24,9 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "AI Upskill — Впровадь AI у свою компанію за 2 тижні",
+    title: "AI Upskill — Впровадь AI у свою компанію за 5 днів",
     description:
-      "Кожен співробітник побудує працюючу AI-автоматизацію. 5x продуктивність. Від $79.",
+      "Кожен співробітник побудує працюючу AI-автоматизацію. 5x продуктивність.",
   },
   alternates: {
     canonical: "https://aiupskill.live",
@@ -51,8 +51,7 @@ const jsonLdOrg = {
     name: "Ярослав Максимович",
   },
   offers: [
-    { "@type": "Offer", name: "Solo", price: "79", priceCurrency: "USD" },
-    { "@type": "Offer", name: "Team", price: "290", priceCurrency: "USD" },
+    { "@type": "Offer", name: "Trial", price: "0", priceCurrency: "USD" },
   ],
 };
 

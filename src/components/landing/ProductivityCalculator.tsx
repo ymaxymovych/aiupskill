@@ -175,7 +175,7 @@ export default function ProductivityCalculator() {
   const conservativeYearlySavings = conservativeSaved * hourlyRate * 4.3 * 12;
   const optimisticYearlySavings = optimisticSaved * hourlyRate * 4.3 * 12;
 
-  const courseCost = teamSize <= 1 ? 79 : teamSize <= 5 ? 290 : teamSize <= 30 ? 1900 : 3500;
+  const courseCost = teamSize * 49;
   const paybackDays = Math.ceil(courseCost / (conservativeYearlySavings / 365));
   const effectiveTeam = Math.round(teamSize * data.optimistic);
 

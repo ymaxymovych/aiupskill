@@ -21,17 +21,20 @@ export default function AuthorSection() {
           {/* Photo placeholder */}
           <div
             className={cn(
-              "aspect-[3/4] bg-surface-alt rounded-2xl border border-border flex items-center justify-center mx-auto md:mx-0 w-full max-w-[300px] animate-in",
+              "aspect-[3/4] bg-surface-alt rounded-2xl border border-border overflow-hidden mx-auto md:mx-0 w-full max-w-[300px] animate-in",
               isVisible && "visible"
             )}
           >
-            <div className="text-center text-text-secondary">
-              <div className="w-20 h-20 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-3">
-                <span className="text-3xl">👔</span>
-              </div>
-              <p className="font-medium text-text">Ярослав Максимович</p>
-              <p className="text-sm">Фото</p>
-            </div>
+            <img
+              src="https://media.licdn.com/dms/image/v2/D4D03AQGjVYPqE3gBSg/profile-displayphoto-shrink_800_800/profile-displayphoto-shrink_800_800/0/1719350091498?e=1726099200&v=beta&t=placeholder"
+              alt="Ярослав Максимович"
+              className="w-full h-full object-cover"
+              onError={(e) => {
+                const target = e.target as HTMLImageElement;
+                target.style.display = "none";
+                target.parentElement!.innerHTML = `<div class="flex items-center justify-center h-full text-center text-text-secondary"><div><div class="w-20 h-20 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-3"><span class="text-3xl">&#128084;</span></div><p class="font-medium text-text">Ярослав Максимович</p></div></div>`;
+              }}
+            />
           </div>
 
           {/* Bio */}

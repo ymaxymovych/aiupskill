@@ -2,7 +2,6 @@
 
 import { useIntersection } from "@/hooks/useIntersection";
 import { cn } from "@/lib/cn";
-import { ACCELERATOR_URL } from "@/lib/constants";
 
 const MODULES = [
   { num: "01", title: "Аудит рутини", desc: "AI знаходить задачі для автоматизації. Перша маленька перемога — за 30 хвилин" },
@@ -59,9 +58,7 @@ export default function CourseProgram() {
 
         <div className="text-center mt-8">
           <a
-            href={`${ACCELERATOR_URL}/#program`}
-            target="_blank"
-            rel="noopener noreferrer"
+            href="#program"
             className="text-primary font-semibold hover:underline"
           >
             Повна програма &rarr;
