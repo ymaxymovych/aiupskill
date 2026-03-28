@@ -80,8 +80,13 @@ export default function DynamicPrice({
   const isConsultation = pricePerPerson === 0 || pricePerPerson === null;
   const totalPrice = isConsultation ? 0 : (pricePerPerson ?? 0) * people;
 
-  // Monthly saving estimate in UAH (~14,000 грн/person/month conservative)
-  const estimatedMonthlySaving = monthlySaving || people * 14000;
+  // B2.16: 25% від рутини (10 год/тижд дефолт), зарплата 35000 грн
+  // hourlyRate = 35000/168 ≈ 208, saved = 10*0.25*4.3*208 ≈ 2236 грн/люд/міс
+  const avgSalary = 35000;
+  const routineHoursWeek = 10;
+  const hourlyRate = avgSalary / 168;
+  const savedPerPersonMonth = routineHoursWeek * 0.25 * 4.3 * hourlyRate;
+  const estimatedMonthlySaving = monthlySaving || Math.round(savedPerPersonMonth * people);
   const paybackDays =
     totalPrice > 0 && estimatedMonthlySaving > 0
       ? Math.round((totalPrice / estimatedMonthlySaving) * 30)
