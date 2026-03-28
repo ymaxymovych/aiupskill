@@ -13,7 +13,7 @@ export interface CourseConfigData {
 const DEFAULTS: CourseConfigData = {
   durationDays: 5,
   durationHours: 10,
-  modulesCount: 5,
+  modulesCount: 4,
   firstWinMinutes: 30,
   firstAutomationDay: 1,
   supportWeeks: 4,

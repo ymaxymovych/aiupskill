@@ -6,7 +6,7 @@ import { useCountUp } from "@/hooks/useCountUp";
 const STATS = [
   { value: 100000, label: "задач досліджено", suffix: "", source: "Anthropic" },
   { value: 5, label: "продуктивність", suffix: "x", source: "дослідження" },
-  { value: 5, label: "днів до результату", suffix: "", source: "5 модулів" },
+  { value: 5, label: "днів до результату", suffix: "", source: "4 модулі" },
   { value: 0, label: "годин теорії", suffix: "", source: "" },
   { value: 1, label: "модуль безкоштовно", suffix: "", source: "Перший" },
   { value: 2, label: "публікації Forbes", suffix: "", source: "Forbes" },

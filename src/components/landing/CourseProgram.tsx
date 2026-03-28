@@ -22,7 +22,7 @@ export default function CourseProgram() {
             isVisible && "visible"
           )}
         >
-          5 модулів. 10 годин. 1 автоматизація.
+          4 модулі. 10 годин. 1 автоматизація.
         </h2>
         <p
           className={cn(

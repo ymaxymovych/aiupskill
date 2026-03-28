@@ -7,7 +7,6 @@ import ProblemBlock from "@/components/landing/ProblemBlock";
 import BridgeSection from "@/components/landing/BridgeSection";
 import KeyboardJobsSection from "@/components/landing/KeyboardJobsSection";
 import NotChatGPT from "@/components/landing/NotChatGPT";
-import WhyEmployeesWant from "@/components/landing/WhyEmployeesWant";
 import PotentialResourceSection from "@/components/landing/PotentialResourceSection";
 import CompetitivePressureSection from "@/components/landing/CompetitivePressureSection";
 import AuditWizard from "@/components/landing/AuditWizard";
@@ -43,8 +42,6 @@ export default function Home() {
         {/* 7. ChatGPT vs AI-агент */}
         <NotChatGPT />
         {/* 8. Чому після курсу самі хочуть автоматизувати */}
-        <WhyEmployeesWant />
-        {/* 9. Потенціал + Ресурс */}
         <PotentialResourceSection />
         {/* 9. Конкурентний тиск */}
         <CompetitivePressureSection />

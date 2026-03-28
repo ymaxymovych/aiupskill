@@ -124,18 +124,6 @@ export default function NotChatGPT() {
           ))}
         </div>
 
-        <blockquote
-          className={cn(
-            "text-center mt-10 text-text-secondary italic animate-in",
-            isVisible && "visible"
-          )}
-          style={{ transitionDelay: "500ms" }}
-        >
-          &ldquo;80% компаній впровадили AI. 80% з них не бачать впливу на
-          прибуток.&rdquo;
-          <br />
-          <span className="text-sm not-italic">— McKinsey, 2025</span>
-        </blockquote>
       </div>
     </section>
   );
