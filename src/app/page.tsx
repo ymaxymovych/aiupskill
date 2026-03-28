@@ -31,9 +31,9 @@ export default function Home() {
         <HeroSection />
         {/* 2. ❶❷❸ ТРИ КРОКИ */}
         <RoadmapSection />
-        {/* 3. Перша перемога + McKinsey */}
-        <FirstWinSection />
+        {/* 3. McKinsey цитата + Перша перемога */}
         <McKinseyQuote />
+        <FirstWinSection />
         {/* 4. Чому 80% провалюють + 4 хрестики */}
         <ProblemBlock />
         {/* 5. Міст: "AI Upskill працює інакше" */}

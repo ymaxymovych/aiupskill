@@ -120,7 +120,7 @@ export default function AuthorSection() {
               style={{ transitionDelay: "700ms" }}
             >
               <a
-                href="https://www.facebook.com/nicetomeetyou.iam.yaroslav"
+                href="https://www.facebook.com/yaroslav.maxymovych/posts/pfbid02g3mpcjaKwkFChuDZK46okoSdSdouceYASXQ3eVNvkpPPYL9oUL8NuD5u2vbNnga9l"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-primary hover:underline font-medium"

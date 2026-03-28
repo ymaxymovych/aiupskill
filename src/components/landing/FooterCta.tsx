@@ -144,7 +144,7 @@ export default function FooterCta() {
             isVisible && "visible"
           )}
         >
-          Почніть з безкоштовної консультації
+          Безкоштовна консультація: 15 хвилин
         </h2>
         <p
           className={cn(
@@ -153,8 +153,7 @@ export default function FooterCta() {
           )}
           style={{ transitionDelay: "100ms" }}
         >
-          15 хвилин. Ярослав особисто розбере задачі вашої команди і покаже що AI
-          може змінити.
+          Розберемо задачі вашої команди і підберемо план.
         </p>
 
         <form
