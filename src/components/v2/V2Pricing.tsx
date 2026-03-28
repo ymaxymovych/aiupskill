@@ -33,9 +33,9 @@ export default function V2Pricing() {
           </GlassCard>
         </FadeIn>
 
-        {/* Dynamic pricing slider */}
+        {/* Dynamic pricing slider — dark theme overrides */}
         <FadeIn delay={0.15}>
-          <div className="[&_*]:!bg-transparent [&_.bg-white]:!bg-white/[0.04] [&_.bg-gray-50]:!bg-white/[0.03] [&_.bg-green-50]:!bg-green-500/[0.06] [&_.bg-blue-50]:!bg-blue-500/[0.06] [&_.text-gray-900]:!text-white [&_.text-gray-700]:!text-white/70 [&_.text-gray-500]:!text-white/45 [&_.text-gray-400]:!text-white/30 [&_.border-gray-200]:!border-white/[0.08] [&_.border-gray-300]:!border-white/[0.1]">
+          <div className="v2-pricing-dark">
             <DynamicPrice
               people={10}
               showSlider={true}
