@@ -212,11 +212,18 @@ export default function DynamicPrice({
               {formatUAH(totalPrice)}
             </p>
           </div>
-          <div className="text-center p-3 bg-green-50 rounded-lg">
-            <p className="text-sm text-gray-500">Економія/міс</p>
+          <div className="text-center p-3 bg-green-50 rounded-lg relative group">
+            <p className="text-sm text-gray-500 inline-flex items-center gap-1">
+              Економія/міс
+              <span className="inline-flex items-center justify-center w-4 h-4 rounded-full bg-gray-200 text-gray-500 text-[10px] font-bold cursor-help" title="Якщо кожен співробітник заощадить 2.5 години рутини на тиждень при зарплаті 35 000 грн/міс. Це консервативна оцінка (25% від рутинного часу).">?</span>
+            </p>
             <p className="text-2xl font-bold text-green-600">
               {formatUAH(estimatedMonthlySaving)}
             </p>
+            <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-64 bg-gray-900 text-white text-xs rounded-lg p-3 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-20 leading-relaxed">
+              Якщо кожен співробітник заощадить 2.5 години рутини на тиждень при зарплаті 35 000 грн/міс. Це консервативна оцінка (25% від рутинного часу).
+              <div className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-gray-900" />
+            </div>
           </div>
           <div className="text-center p-3 bg-blue-50 rounded-lg">
             <p className="text-sm text-gray-500">Окупність</p>
@@ -225,6 +232,16 @@ export default function DynamicPrice({
             </p>
           </div>
         </div>
+      )}
+
+      {/* Formula explanation */}
+      {!isConsultation && (
+        <p className="text-xs text-gray-400 text-center mb-6">
+          Розрахунок: зарплата 35 000 грн → 208 грн/год × 2.5 год економії/тижд = ~2 240 грн/міс на людину.{" "}
+          <a href="#calculator" className="text-[#1a56db] hover:underline">
+            Змінити параметри в калькуляторі ↓
+          </a>
+        </p>
       )}
 
       {/* CTAs */}
