@@ -185,7 +185,7 @@ export default function DynamicPrice({
             Для {people}+ людей — індивідуальна пропозиція
           </p>
           <p className="text-sm text-gray-500">
-            Напишіть: yaroslav@aiupskill.live
+            Напишіть: ceo@aiadvisoryboard.me
           </p>
         </div>
       ) : (
@@ -238,7 +238,7 @@ export default function DynamicPrice({
       {/* Trial note */}
       <p className="text-center text-xs text-gray-400 mt-4">
         Перший модуль — безкоштовно, без картки.
-        {people >= 100 && " Більше 100 людей? Напишіть: yaroslav@aiupskill.live"}
+        {people >= 100 && " Більше 100 людей? Напишіть: ceo@aiadvisoryboard.me"}
       </p>
     </div>
   );

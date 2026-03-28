@@ -36,10 +36,13 @@ export default function Footer() {
                 href="https://aiadvisoryboard.me"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-gray-400 hover:text-white transition-colors"
+                className="text-gray-400 hover:text-white transition-colors block"
               >
-                &rarr; AI Advisory Board — AI для менеджерів
+                &rarr; AI Advisory Board — щоденний AI-помічник для керівника
               </a>
+              <p className="text-gray-600 text-xs mt-1">
+                Крок 3 вашої трансформації. Перший місяць безкоштовно для випускників.
+              </p>
             </div>
           </div>
 

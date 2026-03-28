@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 
 const CALENDLY_URL = "https://calendly.com/yaroslav-maxymovych";
 const TELEGRAM_LINK = "https://t.me/YaroslavMaxymovych";
-const EMAIL_LINK = "mailto:ceo@aiupskill.live";
+const EMAIL_LINK = "mailto:ceo@aiadvisoryboard.me";
 
 interface Props {
   open: boolean;
