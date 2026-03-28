@@ -41,7 +41,7 @@ JSON:
 {
   "intro": "3-4 речення вступу про AI-автоматизації в цій галузі",
   "processes_table": [
-    {"department": "Маркетинг", "process": "Кваліфікація лідів", "chain_short": "FB Lead → n8n → AI → CRM → Email", "time_saving": "15 год/тижд", "money_saving": "~16 000 грн/міс"},
+    {"department": "Маркетинг", "process": "Кваліфікація лідів", "chain_short": "FB Lead → n8n → AI → CRM → Email", "time_saving": "15 год/тижд", "money_saving": "~800 грн/люд/міс"},
     ... (мінімум 15 рядків для різних відділів)
   ],
   "input_processing_decision_examples": [
