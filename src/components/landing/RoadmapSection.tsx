@@ -80,7 +80,7 @@ export default function RoadmapSection() {
                 НАВЧИ 100% СПІВРОБІТНИКІВ
               </h3>
               <p className="text-sm text-text-secondary mb-3">
-                5 днів · Від $49/людину
+                5 днів · Від 1 999 грн/людину
               </p>
               <p className="text-body text-text-secondary mb-2">
                 Кожен побудує працюючу автоматизацію для своєї посади.

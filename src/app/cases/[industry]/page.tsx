@@ -22,7 +22,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   if (!ind) return {};
   return {
     title: `AI-автоматизації в ${ind.name}: ланцюжки для бізнесу | AI Upskill`,
-    description: `AI-ланцюжки для ${ind.name}. Від кваліфікації лідів до автозвітності. Курс від $49/людину.`,
+    description: `AI-ланцюжки для ${ind.name}. Від кваліфікації лідів до автозвітності. Курс від 1 999 грн/людину.`,
   };
 }
 

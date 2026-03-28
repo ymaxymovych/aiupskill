@@ -8,7 +8,7 @@ import { INDUSTRIES, ROLES } from "@/lib/seo/industries-roles";
 export const metadata: Metadata = {
   title: "Кейси AI-автоматизацій по галузях | AI Upskill",
   description:
-    "Конкретні AI-ланцюжки автоматизацій для 10 галузей та 8 ролей. n8n, Claude API, CRM інтеграції з цифрами економії. Курс від $49/людину.",
+    "Конкретні AI-ланцюжки автоматизацій для 10 галузей та 8 ролей. n8n, Claude API, CRM інтеграції з цифрами економії. Курс від 1 999 грн/людину.",
 };
 
 export default function CasesHubPage() {

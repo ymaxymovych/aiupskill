@@ -36,7 +36,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   if (!ind || !r) return {};
   return {
     title: `AI-автоматизації для ${r.name} в ${ind.name} | AI Upskill`,
-    description: `AI-ланцюжки для ${r.name} в ${ind.name}. n8n, Claude API, CRM. Курс від $49, окупність від 5 днів.`,
+    description: `AI-ланцюжки для ${r.name} в ${ind.name}. n8n, Claude API, CRM. Курс від 1 999 грн, окупність від 5 днів.`,
   };
 }
 

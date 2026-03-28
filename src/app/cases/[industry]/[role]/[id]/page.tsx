@@ -30,7 +30,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const headline = interview.headline || interview.name;
   return {
     title: `${headline} | ${r.name} в ${ind.name} | AI Upskill`,
-    description: `Сценарій: ${r.name.toLowerCase()} в ${ind.name.toLowerCase()}. AI-ланцюжок автоматизації. Курс від $49, окупність від 5 днів.`,
+    description: `Сценарій: ${r.name.toLowerCase()} в ${ind.name.toLowerCase()}. AI-ланцюжок автоматизації. Курс від 1 999 грн, окупність від 5 днів.`,
   };
 }
 
