@@ -16,7 +16,7 @@ export default function RoadmapSection() {
       <div className="container-main max-w-3xl" ref={ref}>
         <h2
           className={cn(
-            "text-h2 text-text text-center mb-12 animate-in",
+            "text-3xl md:text-4xl lg:text-5xl font-bold text-text text-center mb-12 animate-in",
             isVisible && "visible"
           )}
         >
