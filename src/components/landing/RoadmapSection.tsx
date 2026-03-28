@@ -82,9 +82,15 @@ export default function RoadmapSection() {
               <p className="text-sm text-text-secondary mb-3">
                 5 днів · Від $49/людину
               </p>
-              <p className="text-body text-text-secondary mb-4">
-                Кожен побудує працюючу автоматизацію
-                для своєї посади. Перша — вже в перший день.
+              <p className="text-body text-text-secondary mb-2">
+                Кожен побудує працюючу автоматизацію для своєї посади.
+                Не дивиться відео. Не проходить тест. А будує працюючий інструмент.
+              </p>
+              <p className="text-sm text-text-secondary mb-4">
+                Маркетолог — генератор контенту.
+                Бухгалтер — автоматизацію звітів.
+                HR — скринер резюме.
+                Перша — вже в перший день.
               </p>
               <a
                 href={`${ACCELERATOR_URL}/register?plan=trial`}

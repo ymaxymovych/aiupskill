@@ -2,13 +2,17 @@
 
 import { useIntersection } from "@/hooks/useIntersection";
 import { cn } from "@/lib/cn";
-import { TELEGRAM_URL, LINKEDIN_URL } from "@/lib/constants";
 
 const ACHIEVEMENTS = [
   "Перший в Україні продав стартап за $1М+",
   "3000 співбесід, 300+ людей в управлінні",
   "50+ стартапів, 10 у прибуток, 4 продав",
   "К.т.н., прикладна математика + економіка",
+];
+
+const FORBES = [
+  { title: "«Портфель аукціоніста»", href: "/pdf/forbes-portfolio-auctioneer.pdf" },
+  { title: "«Інтелектуальні власники»", href: "/pdf/forbes-intellectual-owners.pdf" },
 ];
 
 export default function AuthorSection() {
@@ -18,7 +22,7 @@ export default function AuthorSection() {
     <section className="section-padding bg-surface" id="author">
       <div className="container-main" ref={ref}>
         <div className="grid md:grid-cols-[300px_1fr] gap-10 items-start">
-          {/* Photo placeholder */}
+          {/* Photo */}
           <div
             className={cn(
               "aspect-[3/4] bg-surface-alt rounded-2xl border border-border overflow-hidden mx-auto md:mx-0 w-full max-w-[300px] animate-in",
@@ -29,15 +33,10 @@ export default function AuthorSection() {
               src="/images/author.png"
               alt="Ярослав Максимович"
               className="w-full h-full object-cover"
-              onError={(e) => {
-                const target = e.target as HTMLImageElement;
-                target.style.display = "none";
-                target.parentElement!.innerHTML = `<div class="flex items-center justify-center h-full text-center text-text-secondary"><div><div class="w-20 h-20 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-3"><span class="text-3xl">&#128084;</span></div><p class="font-medium text-text">Ярослав Максимович</p></div></div>`;
-              }}
             />
           </div>
 
-          {/* Bio */}
+          {/* Bio — від першої особи */}
           <div>
             <h2
               className={cn(
@@ -46,7 +45,7 @@ export default function AuthorSection() {
               )}
               style={{ transitionDelay: "100ms" }}
             >
-              Про Ярослава
+              Ярослав Максимович
             </h2>
 
             <ul className="space-y-3 mb-6">
@@ -59,7 +58,7 @@ export default function AuthorSection() {
                   )}
                   style={{ transitionDelay: `${200 + i * 80}ms` }}
                 >
-                  <span className="text-primary mt-1">&#10003;</span>
+                  <span className="text-primary mt-1">→</span>
                   <span className="text-text">{a}</span>
                 </li>
               ))}
@@ -67,38 +66,82 @@ export default function AuthorSection() {
 
             <blockquote
               className={cn(
-                "border-l-4 border-primary pl-4 py-2 text-text-secondary italic mb-6 animate-in",
+                "border-l-4 border-primary pl-4 py-3 mb-6 animate-in",
                 isVisible && "visible"
               )}
               style={{ transitionDelay: "500ms" }}
             >
-              &ldquo;Я не просто навчаю AI — я будую компанії з AI всередині.
-              Кожен інструмент, який ви отримаєте на курсі, я використовую сам у
-              своїх бізнесах щодня.&rdquo;
+              <p className="text-text leading-relaxed mb-2">
+                &ldquo;Свій перший AI-проект я будував 500 годин.
+                Другий — лише 30.
+                Розробив програму, де за 10 годин
+                кожен зробить свою першу автоматизацію.
+              </p>
+              <p className="text-text leading-relaxed">
+                Я не теоретик, не коуч і не програміст.
+                У мене мислення керівника — бо я ніколи
+                не працював за зарплату.&rdquo;
+              </p>
             </blockquote>
 
+            {/* Forbes */}
+            <div
+              className={cn(
+                "mb-6 animate-in",
+                isVisible && "visible"
+              )}
+              style={{ transitionDelay: "600ms" }}
+            >
+              <p className="text-sm font-semibold text-text-secondary uppercase tracking-wider mb-2">
+                FORBES
+              </p>
+              <div className="flex flex-wrap gap-4">
+                {FORBES.map((f) => (
+                  <a
+                    key={f.href}
+                    href={f.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-2 text-primary hover:underline font-medium text-sm"
+                  >
+                    <span>📰</span>
+                    {f.title}
+                  </a>
+                ))}
+              </div>
+            </div>
+
+            {/* Social links */}
             <div
               className={cn(
                 "flex flex-wrap gap-4 animate-in",
                 isVisible && "visible"
               )}
-              style={{ transitionDelay: "600ms" }}
+              style={{ transitionDelay: "700ms" }}
             >
               <a
-                href={TELEGRAM_URL}
+                href="https://www.facebook.com/nicetomeetyou.iam.yaroslav"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-primary hover:underline font-medium"
               >
-                Telegram &rarr;
+                Facebook →
               </a>
               <a
-                href={LINKEDIN_URL}
+                href="https://t.me/YaroslavMaxymovych"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-primary hover:underline font-medium"
               >
-                LinkedIn &rarr;
+                Telegram →
+              </a>
+              <a
+                href="https://linkedin.com/in/yaroslavmaxymovych"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-primary hover:underline font-medium"
+              >
+                LinkedIn →
               </a>
             </div>
           </div>

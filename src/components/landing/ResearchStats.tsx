@@ -29,6 +29,12 @@ const STATS = [
     source: "Дослідження",
     detail: "планування + звітність = +3 год до робочого дня",
   },
+  {
+    value: "17%→37%",
+    label: "залученість після навчання",
+    source: "Gartner",
+    detail: "подвоєння мотивації менеджерів",
+  },
 ];
 
 export default function ResearchStats() {

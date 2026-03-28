@@ -5,16 +5,16 @@ import { cn } from "@/lib/cn";
 import Link from "next/link";
 
 const INDUSTRIES = [
-  { slug: "e-commerce", name: "E-commerce", emoji: "🛒", automations: 25, saving: "$500-2,000" },
-  { slug: "marketynh-ahentstvo", name: "Маркетинг-агентство", emoji: "📢", automations: 22, saving: "$400-1,800" },
-  { slug: "it-kompaniya", name: "IT-компанія", emoji: "💻", automations: 20, saving: "$600-2,500" },
-  { slug: "vyrobnytstvo", name: "Виробництво", emoji: "🏭", automations: 18, saving: "$400-1,500" },
-  { slug: "posluhy", name: "Сфера послуг", emoji: "🔧", automations: 20, saving: "$300-1,200" },
-  { slug: "nerukhomist", name: "Нерухомість", emoji: "🏠", automations: 22, saving: "$500-2,000" },
-  { slug: "lohistyka", name: "Логістика", emoji: "🚛", automations: 16, saving: "$400-1,500" },
-  { slug: "osvita", name: "Освіта / EdTech", emoji: "📚", automations: 15, saving: "$300-1,000" },
-  { slug: "medytsyna", name: "Медицина / Фарма", emoji: "🏥", automations: 16, saving: "$400-1,800" },
-  { slug: "yurysprudentsiya", name: "Юриспруденція", emoji: "⚖️", automations: 14, saving: "$500-2,000" },
+  { slug: "e-commerce", name: "E-commerce", emoji: "🛒", automations: 25, saving: "20 000-80 000 грн" },
+  { slug: "marketynh-ahentstvo", name: "Маркетинг-агентство", emoji: "📢", automations: 22, saving: "15 000-70 000 грн" },
+  { slug: "it-kompaniya", name: "IT-компанія", emoji: "💻", automations: 20, saving: "25 000-100 000 грн" },
+  { slug: "vyrobnytstvo", name: "Виробництво", emoji: "🏭", automations: 18, saving: "15 000-60 000 грн" },
+  { slug: "posluhy", name: "Сфера послуг", emoji: "🔧", automations: 20, saving: "12 000-50 000 грн" },
+  { slug: "nerukhomist", name: "Нерухомість", emoji: "🏠", automations: 22, saving: "20 000-80 000 грн" },
+  { slug: "lohistyka", name: "Логістика", emoji: "🚛", automations: 16, saving: "15 000-60 000 грн" },
+  { slug: "osvita", name: "Освіта / EdTech", emoji: "📚", automations: 15, saving: "12 000-40 000 грн" },
+  { slug: "medytsyna", name: "Медицина / Фарма", emoji: "🏥", automations: 16, saving: "15 000-70 000 грн" },
+  { slug: "yurysprudentsiya", name: "Юриспруденція", emoji: "⚖️", automations: 14, saving: "20 000-80 000 грн" },
 ];
 
 export default function IndustryCasesSection() {
@@ -38,7 +38,8 @@ export default function IndustryCasesSection() {
           )}
           style={{ transitionDelay: "100ms" }}
         >
-          Конкретні ланцюжки з цифрами для кожної ролі у вашій галузі
+          Згенеровані AI на основі реальних проблем.
+          Ваша команда навчиться робити таке саме.
         </p>
 
         <div className="grid sm:grid-cols-2 lg:grid-cols-5 gap-4">

@@ -4,6 +4,7 @@ import RoadmapSection from "@/components/landing/RoadmapSection";
 import FirstWinSection from "@/components/landing/FirstWinSection";
 import McKinseyQuote from "@/components/landing/McKinseyQuote";
 import ProblemBlock from "@/components/landing/ProblemBlock";
+import BridgeSection from "@/components/landing/BridgeSection";
 import KeyboardJobsSection from "@/components/landing/KeyboardJobsSection";
 import NotChatGPT from "@/components/landing/NotChatGPT";
 import PotentialResourceSection from "@/components/landing/PotentialResourceSection";
@@ -12,6 +13,7 @@ import AuditWizard from "@/components/landing/AuditWizard";
 import ProductivityCalculator from "@/components/landing/ProductivityCalculator";
 import CourseProgram from "@/components/landing/CourseProgram";
 import ResearchStats from "@/components/landing/ResearchStats";
+import SocialProofReal from "@/components/landing/SocialProofReal";
 import AuthorSection from "@/components/landing/AuthorSection";
 import PricingSection from "@/components/landing/PricingSection";
 import IndustryCasesSection from "@/components/landing/IndustryCasesSection";
@@ -26,38 +28,42 @@ export default function Home() {
       <main>
         {/* 1. HERO */}
         <HeroSection />
-        {/* 2. ❶❷❸ ТРИ КРОКИ — одразу під hero */}
+        {/* 2. ❶❷❸ ТРИ КРОКИ */}
         <RoadmapSection />
-        {/* 3. Перша перемога за 30 хвилин + McKinsey */}
+        {/* 3. Перша перемога + McKinsey */}
         <FirstWinSection />
         <McKinseyQuote />
         {/* 4. Чому 80% провалюють + 4 хрестики */}
         <ProblemBlock />
-        {/* 5. Будь-яка посада з клавіатурою */}
+        {/* 5. Міст: "AI Upskill працює інакше" */}
+        <BridgeSection />
+        {/* 6. Будь-яка посада з клавіатурою */}
         <KeyboardJobsSection />
-        {/* 6. ChatGPT vs AI-агент */}
+        {/* 7. ChatGPT vs AI-агент */}
         <NotChatGPT />
-        {/* 7. Потенціал + Ресурс */}
+        {/* 8. Потенціал + Ресурс */}
         <PotentialResourceSection />
-        {/* 8. Конкурентний тиск */}
+        {/* 9. Конкурентний тиск */}
         <CompetitivePressureSection />
-        {/* 9. AI-аудит (форма на лендінгу — НЕ видаляти!) */}
+        {/* 10. AI-аудит */}
         <AuditWizard />
-        {/* 10. Калькулятор продуктивності (в гривнях) */}
+        {/* 11. Калькулятор продуктивності */}
         <ProductivityCalculator />
-        {/* 11. 5 модулів курсу */}
+        {/* 12. 5 модулів */}
         <CourseProgram />
-        {/* 12. Дослідження (Anthropic, PwC, Stanford, +38%) */}
+        {/* 13. Дослідження (+38%, Gartner) */}
         <ResearchStats />
-        {/* 13. Про Ярослава (реальне фото!) */}
+        {/* 14. Реальний соціальний доказ */}
+        <SocialProofReal />
+        {/* 15. Про Ярослава (від 1-ї особи, Forbes PDF) */}
         <AuthorSection />
-        {/* 14. Ціни (бігунок в гривнях) */}
+        {/* 16. Ціни (бігунок в грн) */}
         <PricingSection />
-        {/* 15. Кейси по галузях */}
+        {/* 17. Кейси по галузях */}
         <IndustryCasesSection />
-        {/* 16. FAQ */}
+        {/* 18. FAQ */}
         <FaqSection />
-        {/* 17. CTA + контакти */}
+        {/* 19. CTA + контакти */}
         <FooterCta />
       </main>
       <Footer />
