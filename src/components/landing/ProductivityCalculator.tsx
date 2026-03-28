@@ -163,7 +163,7 @@ export default function ProductivityCalculator() {
   const { ref, isVisible } = useIntersection();
   const [role, setRole] = useState<RoleKey>("marketer");
   const [teamSize, setTeamSize] = useState(10);
-  const [salary, setSalary] = useState(800);
+  const [salary, setSalary] = useState(35000);
   const [routineHours, setRoutineHours] = useState(20);
 
   const data = ROLE_MULTIPLIERS[role];
@@ -175,7 +175,7 @@ export default function ProductivityCalculator() {
   const conservativeYearlySavings = conservativeSaved * hourlyRate * 4.3 * 12;
   const optimisticYearlySavings = optimisticSaved * hourlyRate * 4.3 * 12;
 
-  const courseCost = teamSize * 49;
+  const courseCost = teamSize * 2199; // грн/людину (середній тариф)
   const paybackDays = Math.ceil(courseCost / (conservativeYearlySavings / 365));
   const effectiveTeam = Math.round(teamSize * data.optimistic);
 
@@ -238,7 +238,7 @@ export default function ProductivityCalculator() {
         {/* Sliders */}
         <div className="max-w-2xl mx-auto space-y-6 mb-12">
           <SliderInput label="Людей у команді" value={teamSize} min={1} max={50} onChange={setTeamSize} />
-          <SliderInput label="Зарплата $/міс" value={salary} min={300} max={5000} step={50} onChange={setSalary} format={(v) => `$${v}`} />
+          <SliderInput label="Зарплата грн/міс" value={salary} min={15000} max={150000} step={5000} onChange={setSalary} format={(v) => `${v.toLocaleString("uk-UA")} грн`} />
           <SliderInput label="Годин рутини/тижд" value={routineHours} min={5} max={35} onChange={setRoutineHours} format={(v) => `${v} год`} />
         </div>
 
@@ -257,7 +257,7 @@ export default function ProductivityCalculator() {
               </div>
               <div className="flex justify-between text-text-secondary">
                 <span>Економія</span>
-                <span className="text-text font-bold">${Math.round(conservativeYearlySavings).toLocaleString()}/рік</span>
+                <span className="text-text font-bold">{Math.round(conservativeYearlySavings).toLocaleString("uk-UA")} грн/рік</span>
               </div>
             </div>
           </div>
@@ -275,7 +275,7 @@ export default function ProductivityCalculator() {
               </div>
               <div className="flex justify-between text-text-secondary">
                 <span>Економія</span>
-                <span className="text-text font-bold">${Math.round(optimisticYearlySavings).toLocaleString()}/рік</span>
+                <span className="text-text font-bold">{Math.round(optimisticYearlySavings).toLocaleString("uk-UA")} грн/рік</span>
               </div>
             </div>
           </div>
@@ -303,7 +303,7 @@ export default function ProductivityCalculator() {
           <div className="mt-4 pt-4 border-t border-border grid grid-cols-2 gap-4 text-sm">
             <div>
               <div className="text-text-secondary">Вартість навчання</div>
-              <div className="text-text font-bold">${courseCost}</div>
+              <div className="text-text font-bold">{courseCost.toLocaleString("uk-UA")} грн</div>
             </div>
             <div>
               <div className="text-text-secondary">Окупність (конс.)</div>

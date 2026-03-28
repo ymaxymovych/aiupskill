@@ -123,7 +123,7 @@ export function ConsultationModal({ open, onClose }: Props) {
 
         <div className="p-8">
           <h2 className="text-2xl font-bold text-gray-900 mb-2">
-            Замовити безкоштовну консультацію
+            Безкоштовна консультація: 15 хвилин
           </h2>
           <p className="text-gray-500 text-sm mb-6">
             15 хвилин. Розберемо задачі вашої команди і підберемо план.
@@ -213,10 +213,10 @@ export function ConsultationModal({ open, onClose }: Props) {
                     </select>
                   </div>
                   <div>
-                    <label className="text-gray-600 text-sm block mb-1">Що хочете автоматизувати?</label>
+                    <label className="text-gray-600 text-sm block mb-1">Коментар (необов&apos;язково)</label>
                     <textarea rows={2} value={form.task}
                       onChange={(e) => setForm({ ...form, task: e.target.value })}
-                      className="input-field resize-none" placeholder="Опишіть коротко..." />
+                      className="input-field resize-none" placeholder="Наприклад: цікавить навчання для відділу маркетингу" />
                   </div>
                   {error && <p className="text-red-500 text-sm">{error}</p>}
                   <button type="submit" disabled={submitting}

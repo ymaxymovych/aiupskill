@@ -48,6 +48,10 @@ function getMinMaxPrice(tiers: PricingTier[]): { min: number; max: number } {
   return { min: Math.min(...prices), max: Math.max(...prices) };
 }
 
+function formatUAH(amount: number): string {
+  return amount.toLocaleString("uk-UA") + " грн";
+}
+
 export default function DynamicPrice({
   people: initialPeople = 10,
   showSlider = false,
@@ -76,14 +80,15 @@ export default function DynamicPrice({
   const isConsultation = pricePerPerson === 0 || pricePerPerson === null;
   const totalPrice = isConsultation ? 0 : (pricePerPerson ?? 0) * people;
 
-  const estimatedMonthlySaving = monthlySaving || people * 350; // $350/person/month conservative
+  // Monthly saving estimate in UAH (~14,000 грн/person/month conservative)
+  const estimatedMonthlySaving = monthlySaving || people * 14000;
   const paybackDays =
     totalPrice > 0 && estimatedMonthlySaving > 0
       ? Math.round((totalPrice / estimatedMonthlySaving) * 30)
       : 0;
 
   const { min: minPrice, max: maxPrice } =
-    tiers.length > 0 ? getMinMaxPrice(tiers) : { min: 49, max: 99 };
+    tiers.length > 0 ? getMinMaxPrice(tiers) : { min: 1999, max: 4999 };
 
   const handleSlider = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     setPeople(Number(e.target.value));
@@ -99,7 +104,7 @@ export default function DynamicPrice({
   if (variant === "inline") {
     return (
       <span className={className}>
-        від ${minPrice} до ${maxPrice} за людину
+        від {formatUAH(minPrice)} до {formatUAH(maxPrice)} за людину
       </span>
     );
   }
@@ -112,13 +117,13 @@ export default function DynamicPrice({
           <div>
             <span className="text-gray-500">Вартість за людину</span>
             <p className="text-lg font-semibold text-gray-900">
-              {isConsultation ? "Індивідуально" : `$${pricePerPerson}`}
+              {isConsultation ? "Індивідуально" : formatUAH(pricePerPerson!)}
             </p>
           </div>
           <div>
             <span className="text-gray-500">Загальна вартість</span>
             <p className="text-lg font-semibold text-gray-900">
-              {isConsultation ? "За запитом" : `$${totalPrice.toLocaleString()}`}
+              {isConsultation ? "За запитом" : formatUAH(totalPrice)}
             </p>
           </div>
           {showPayback && !isConsultation && (
@@ -126,7 +131,7 @@ export default function DynamicPrice({
               <div>
                 <span className="text-gray-500">Середня економія</span>
                 <p className="text-lg font-semibold text-green-600">
-                  ${estimatedMonthlySaving.toLocaleString()}/міс
+                  {formatUAH(estimatedMonthlySaving)}/міс
                 </p>
               </div>
               <div>
@@ -193,19 +198,19 @@ export default function DynamicPrice({
           <div className="text-center p-3 bg-gray-50 rounded-lg">
             <p className="text-sm text-gray-500">За людину</p>
             <p className="text-2xl font-bold text-gray-900">
-              ${pricePerPerson}
+              {formatUAH(pricePerPerson!)}
             </p>
           </div>
           <div className="text-center p-3 bg-gray-50 rounded-lg">
             <p className="text-sm text-gray-500">Загалом</p>
             <p className="text-2xl font-bold text-gray-900">
-              ${totalPrice.toLocaleString()}
+              {formatUAH(totalPrice)}
             </p>
           </div>
           <div className="text-center p-3 bg-green-50 rounded-lg">
             <p className="text-sm text-gray-500">Економія/міс</p>
             <p className="text-2xl font-bold text-green-600">
-              ${estimatedMonthlySaving.toLocaleString()}
+              {formatUAH(estimatedMonthlySaving)}
             </p>
           </div>
           <div className="text-center p-3 bg-blue-50 rounded-lg">
