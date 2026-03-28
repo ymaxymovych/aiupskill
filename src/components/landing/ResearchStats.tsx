@@ -23,6 +23,12 @@ const STATS = [
     source: "IBM",
     detail: "270 000 людей",
   },
+  {
+    value: "+38-50%",
+    label: "виконання планів",
+    source: "Дослідження",
+    detail: "планування + звітність = +3 год до робочого дня",
+  },
 ];
 
 export default function ResearchStats() {

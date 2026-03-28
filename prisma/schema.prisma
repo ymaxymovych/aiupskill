@@ -41,3 +41,96 @@ model AuditSession {
   @@map("audit_sessions")
   @@index([createdAt])
 }
+
+// ========== Course Configuration ==========
+
+model CourseConfig {
+  id                 String @id @default(uuid())
+  durationDays       Int    @default(5)
+  durationHours      Int    @default(10)
+  modulesCount       Int    @default(5)
+  firstWinMinutes    Int    @default(30)
+  firstAutomationDay Int    @default(1)
+  supportWeeks       Int    @default(4)
+  accessMonths       Int    @default(12)
+
+  @@map("course_config")
+}
+
+model B2BCoursePricing {
+  id             String   @id @default(uuid())
+  minPeople      Int      @map("min_people")
+  maxPeople      Int?     @map("max_people")
+  pricePerPerson Float    @map("price_per_person")
+  currency       String   @default("USD")
+  isActive       Boolean  @default(true) @map("is_active")
+  createdAt      DateTime @default(now()) @map("created_at")
+  updatedAt      DateTime @updatedAt @map("updated_at")
+
+  @@map("b2b_course_pricing")
+}
+
+// ========== SEO Portal Content ==========
+
+model B2BGeneratedInterview {
+  id          String   @id @default(uuid())
+  industry    String
+  role        String
+  language    String   @default("uk")
+  name        String
+  jobTitle    String   @map("job_title")
+  companyDesc String?  @map("company_desc")
+  teamSize    String?  @map("team_size")
+  headline    String?
+  content     Json
+  viewCount   Int      @default(0) @map("view_count")
+  ctaClicks   Int      @default(0) @map("cta_clicks")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  @@map("b2b_generated_interviews")
+  @@index([industry, language])
+  @@index([industry, role, language])
+}
+
+model B2BAutomation {
+  id              String   @id @default(uuid())
+  slug            String   @unique
+  name            String
+  category        String
+  departments     String[]
+  industries      String[]
+  roles           String[]
+  complexity      String   @default("medium")
+  content         Json
+  hoursSavedWeek  Float    @map("hours_saved_week")
+  moneySavedMonth Float    @map("money_saved_month")
+  buildTimeHours  Float?   @map("build_time_hours")
+  tools           String[]
+  isActive        Boolean  @default(true) @map("is_active")
+  createdAt       DateTime @default(now()) @map("created_at")
+  updatedAt       DateTime @updatedAt @map("updated_at")
+
+  @@map("b2b_automations")
+}
+
+model B2BIndustryHub {
+  id      String @id @default(uuid())
+  slug    String @unique
+  name    String
+  emoji   String
+  content Json
+
+  @@map("b2b_industry_hubs")
+  @@index([slug])
+}
+
+model B2BRolePage {
+  id           String @id @default(uuid())
+  industrySlug String @map("industry_slug")
+  roleSlug     String @map("role_slug")
+  content      Json
+
+  @@map("b2b_role_pages")
+  @@unique([industrySlug, roleSlug])
+}
