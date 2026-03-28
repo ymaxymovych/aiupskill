@@ -15,20 +15,19 @@ export default function HeroSection() {
           {/* Left: Text */}
           <div>
             <p className="text-primary font-semibold mb-4 text-lg">
-              Для CEO та керівників відділів
+              AI-агенти збільшують продуктивність до 5 раз — Anthropic, 100 000 задач
             </p>
             <h1 className="text-h1 text-text mb-6">
-              Впровадіть AI у вашу
+              Кожен ваш співробітник
               <br />
-              компанію. Системно.
+              побудує AI-автоматизацію
+              <br />
+              для своєї посади.
               <br />
               <span className="text-primary">За 5 днів.</span>
-              <br />
-              З результатом.
             </h1>
-            <p className="text-body text-text-secondary mb-8 max-w-lg">
-              Кожен ваш співробітник побудує працюючу AI-автоматизацію для своєї
-              посади.
+            <p className="text-lg md:text-xl text-text-secondary font-medium mb-8 max-w-lg">
+              Від маркетолога до бухгалтера. Своїми руками. Без коду.
             </p>
             <div className="flex flex-col sm:flex-row gap-4">
               <button onClick={() => setModalOpen(true)} className="btn-primary">
