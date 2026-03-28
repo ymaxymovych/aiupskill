@@ -1,0 +1,43 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model ConsultationRequest {
+  id            String   @id @default(uuid())
+  name          String
+  contact       String
+  preferredTime String?  @map("preferred_time")
+  companyUrl    String?  @map("company_url")
+  employeeCount Int?     @map("employee_count")
+  industry      String?
+  auditResult   Json?    @map("audit_result")
+  source        String?
+  status        String   @default("new")
+  notes         String?
+  createdAt     DateTime @default(now()) @map("created_at")
+  updatedAt     DateTime @updatedAt @map("updated_at")
+
+  @@map("consultation_requests")
+  @@index([status])
+}
+
+model AuditSession {
+  id            String   @id @default(uuid())
+  websiteUrl    String?  @map("website_url")
+  employeeCount Int?     @map("employee_count")
+  industry      String?
+  departments   Json?
+  result        Json?
+  refined       Boolean  @default(false)
+  ipAddress     String?  @map("ip_address")
+  userAgent     String?  @map("user_agent")
+  createdAt     DateTime @default(now()) @map("created_at")
+
+  @@map("audit_sessions")
+  @@index([createdAt])
+}
