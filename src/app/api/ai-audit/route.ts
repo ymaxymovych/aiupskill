@@ -180,7 +180,7 @@ export async function POST(req: Request) {
 
     // Calculate ROI
     const totalHoursPerWeek = topAutomations.reduce((sum, a) => sum + a.hoursPerWeek, 0);
-    const avgHourlyRate = 10; // conservative $10/hr for Ukraine market
+    const avgHourlyRate = 208; // conservative 208 грн/год (35000/168) for Ukraine market
     const annualSavings = Math.round(totalHoursPerWeek * 52 * avgHourlyRate);
     const trainingCost = employeeCount <= 1 ? 79 : employeeCount <= 5 ? 290 : employeeCount <= 30 ? 1900 : 3500;
     const paybackDays = annualSavings > 0 ? Math.ceil((trainingCost / annualSavings) * 365) : 999;

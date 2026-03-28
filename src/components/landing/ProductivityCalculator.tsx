@@ -332,7 +332,7 @@ export default function ProductivityCalculator() {
         <div className="text-center text-text-secondary/60 text-xs max-w-3xl mx-auto space-y-2">
           <p>
             На основі: Anthropic 5x (100K задач), PwC 66% (308 компаній), Stanford 2.5x (18 задач),
-            Cornell 14-34% (customer support), IBM $4.5B (270K працівників), METR RCT (розробники)
+            Cornell 14-34% (customer support), IBM 4.5 млрд (270K працівників), METR RCT (розробники)
           </p>
           <p>
             Консервативний розрахунок: якщо кожен заощадить хоча б {Math.round(savedHoursWeekPerPerson * 10) / 10} години рутини на тиждень — курс окупається за ~{paybackDays} днів.

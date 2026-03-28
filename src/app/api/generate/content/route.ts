@@ -26,7 +26,7 @@ const ROLES = [
   { slug: "bukhhalter", name: "Бухгалтер", dbCode: "accountant" },
 ];
 
-const SYSTEM = `Ти генеруєш SEO-контент для порталу AI Upskill (курс AI-автоматизацій, 5 днів, від $49/люд).
+const SYSTEM = `Ти генеруєш SEO-контент для порталу AI Upskill (курс AI-автоматизацій, 5 днів, від 1 999 грн/люд).
 МОВА: українська. Без AI-кліше. Конкретні ланцюжки з n8n, Claude API, CRM-інтеграціями.
 Відповідай ТІЛЬКИ валідним JSON.`;
 
@@ -41,7 +41,7 @@ JSON:
 {
   "intro": "3-4 речення вступу про AI-автоматизації в цій галузі",
   "processes_table": [
-    {"department": "Маркетинг", "process": "Кваліфікація лідів", "chain_short": "FB Lead → n8n → AI → CRM → Email", "time_saving": "15 год/тижд", "money_saving": "~$800/міс"},
+    {"department": "Маркетинг", "process": "Кваліфікація лідів", "chain_short": "FB Lead → n8n → AI → CRM → Email", "time_saving": "15 год/тижд", "money_saving": "~16 000 грн/міс"},
     ... (мінімум 15 рядків для різних відділів)
   ],
   "input_processing_decision_examples": [

@@ -180,7 +180,7 @@ function slugify(name: string): string {
 
 const SYSTEM_PROMPT = `Ти генеруєш контент для сторінки AI-автоматизації на SEO-порталі B2B курсу AI Upskill.
 
-КОНТЕКСТ: Курс навчає будувати AI-автоматизаційні ланцюжки (n8n, vibe-coding, API). 5 днів, 10 годин, 5 модулів. Ціна від $49 до $99/людину.
+КОНТЕКСТ: Курс навчає будувати AI-автоматизаційні ланцюжки (n8n, vibe-coding, API). 5 днів, 10 годин, 5 модулів. Ціна від 1 999 до 4 999 грн/людину.
 
 ПРАВИЛА:
 1. Кожен крок — конкретний інструмент: n8n, Claude API, Gmail API, Telegram Bot API, Pipedrive API, Google Sheets API

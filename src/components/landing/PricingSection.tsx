@@ -20,7 +20,7 @@ export default function PricingSection() {
         >
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-8">
             <div>
-              <span className="text-3xl font-bold text-primary">$0</span>
+              <span className="text-3xl font-bold text-primary">0 грн</span>
               <span className="text-sm text-text-secondary ml-2">
                 — перший модуль безкоштовно
               </span>

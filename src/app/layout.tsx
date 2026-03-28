@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Onest } from "next/font/google";
 import "./globals.css";
+import MobileStickyCta from "@/components/shared/MobileStickyCta";
 
 const onest = Onest({
   subsets: ["latin", "cyrillic"],
@@ -51,7 +52,7 @@ const jsonLdOrg = {
     name: "Ярослав Максимович",
   },
   offers: [
-    { "@type": "Offer", name: "Trial", price: "0", priceCurrency: "USD" },
+    { "@type": "Offer", name: "Trial", price: "0", priceCurrency: "UAH" },
   ],
 };
 
@@ -68,7 +69,10 @@ export default function RootLayout({
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLdOrg) }}
         />
       </head>
-      <body className="font-sans">{children}</body>
+      <body className="font-sans pb-14 md:pb-0">
+        {children}
+        <MobileStickyCta />
+      </body>
     </html>
   );
 }

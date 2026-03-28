@@ -25,7 +25,7 @@ export async function notifyTelegram(data: {
 *Співробітників:* ${data.employeeCount || "Не вказано"}
 *Галузь:* ${data.industry || "Не визначено"}
 *AI-аудит:* ${data.auditResult ? "Пройдений ✅" : "Ні"}
-${data.auditResult?.summary?.annual_savings_usd ? `*Потенційна економія:* $${data.auditResult.summary.annual_savings_usd}/рік` : ""}
+${data.auditResult?.summary?.annual_savings_usd ? `*Потенційна економія:* ${data.auditResult.summary.annual_savings_usd.toLocaleString("uk-UA")} грн/рік` : ""}
 *Джерело CTA:* ${data.source || "unknown"}`;
 
   try {

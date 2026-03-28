@@ -18,7 +18,7 @@ const STATS = [
     detail: "308 компаній",
   },
   {
-    value: "$4.5B",
+    value: "4.5 млрд",
     label: "приріст прибутку",
     source: "IBM",
     detail: "270 000 людей",

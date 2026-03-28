@@ -13,6 +13,7 @@ import {
   findIndustry,
   findRole,
 } from "@/lib/seo/industries-roles";
+import { ROLE_CONTENT } from "@/lib/seo/role-content";
 import { prisma } from "@/lib/db";
 
 interface Props {
@@ -46,7 +47,8 @@ export default async function RolePage({ params }: Props) {
   const role = findRole(roleSlug);
   if (!ind || !role) notFound();
 
-  // Fetch interviews for this industry+role combo
+  const content = ROLE_CONTENT[role.dbCode];
+
   let interviews: { id: string; name: string; headline: string | null; jobTitle: string }[] = [];
   try {
     interviews = await prisma.b2BGeneratedInterview.findMany({
@@ -55,9 +57,7 @@ export default async function RolePage({ params }: Props) {
       take: 8,
       orderBy: { viewCount: "desc" },
     });
-  } catch {
-    // DB not available
-  }
+  } catch {}
 
   const pageUrl = `https://aiupskill.live/cases/${indSlug}/${roleSlug}`;
 
@@ -78,16 +78,84 @@ export default async function RolePage({ params }: Props) {
                 ]}
               />
 
+              {/* H1 */}
               <h1 className="text-h1 text-text mb-2">
                 {role.emoji} AI-автоматизації для {role.name} в {ind.name}
               </h1>
-              <p className="text-lg text-text-secondary mb-8">
+              <p className="text-lg text-text-secondary mb-10">
                 Ланцюжки, які ваш {role.name.toLowerCase()} побудує за 5 днів
               </p>
 
+              {/* TOP-5 AUTOMATIONS */}
+              {content && (
+                <>
+                  <h2 className="text-h2 text-text mb-6">
+                    Топ-5 автоматизацій для {role.name}
+                  </h2>
+                  <div className="space-y-4 mb-12">
+                    {content.topAutomations.map((auto, i) => (
+                      <div key={i} className="border border-border rounded-xl p-5">
+                        <div className="flex items-start gap-4">
+                          <span className="text-2xl font-bold text-primary/30 shrink-0">
+                            {String(i + 1).padStart(2, "0")}
+                          </span>
+                          <div className="flex-1">
+                            <h3 className="font-semibold text-text mb-2">{auto.name}</h3>
+                            <div className="bg-surface-alt rounded-lg px-4 py-2 mb-2">
+                              <code className="text-sm text-text-secondary">{auto.chain}</code>
+                            </div>
+                            <span className="text-sm text-green-600 font-medium">
+                              Економія: {auto.timeSaved}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+
+                  {/* INPUT → PROCESSING → DECISION */}
+                  <h2 className="text-h2 text-text mb-4">
+                    Вхід → Обробка → Рішення
+                  </h2>
+                  <p className="text-text-secondary mb-4">
+                    Як AI-ланцюжок працює для {role.name.toLowerCase()}:
+                  </p>
+                  <div className="grid grid-cols-3 gap-4 mb-12">
+                    <div className="text-center p-4 bg-blue-50 rounded-xl">
+                      <div className="text-2xl mb-2">📥</div>
+                      <div className="text-xs text-text-secondary uppercase tracking-wider mb-1">Вхід</div>
+                      <div className="text-sm font-medium text-text">{content.inputOutputDecision.input}</div>
+                    </div>
+                    <div className="text-center p-4 bg-yellow-50 rounded-xl">
+                      <div className="text-2xl mb-2">⚙️</div>
+                      <div className="text-xs text-text-secondary uppercase tracking-wider mb-1">Обробка</div>
+                      <div className="text-sm font-medium text-text">{content.inputOutputDecision.processing}</div>
+                    </div>
+                    <div className="text-center p-4 bg-green-50 rounded-xl">
+                      <div className="text-2xl mb-2">✅</div>
+                      <div className="text-xs text-text-secondary uppercase tracking-wider mb-1">Рішення</div>
+                      <div className="text-sm font-medium text-text">{content.inputOutputDecision.decision}</div>
+                    </div>
+                  </div>
+
+                  {/* OTHER TASKS */}
+                  <h2 className="text-h2 text-text mb-4">
+                    Інші задачі, які можна автоматизувати
+                  </h2>
+                  <div className="grid sm:grid-cols-2 gap-2 mb-12">
+                    {content.otherTasks.map((task, i) => (
+                      <div key={i} className="flex items-start gap-2 py-1">
+                        <span className="text-primary mt-0.5 shrink-0">→</span>
+                        <span className="text-sm text-text-secondary">{task}</span>
+                      </div>
+                    ))}
+                  </div>
+                </>
+              )}
+
               {/* ROI Block */}
               <h2 className="text-h2 text-text mb-4">
-                ROI курсу для {role.name}
+                Вартість: від 1 999 грн/людину
               </h2>
               <DynamicPrice
                 people={1}
@@ -96,23 +164,21 @@ export default async function RolePage({ params }: Props) {
                 variant="block"
                 className="mb-4"
               />
-
-              <ShareWithManager
-                pageUrl={pageUrl}
-                roleName={role.name}
-                industryName={ind.name}
-                paybackDays={5}
-                className="mb-12"
-              />
+              <div className="flex items-center gap-4 mb-12">
+                <a href="/#pricing" className="text-primary hover:underline text-sm font-medium">
+                  Розрахувати точну ціну →
+                </a>
+                <ShareWithManager
+                  pageUrl={pageUrl}
+                  roleName={role.name}
+                  industryName={ind.name}
+                  paybackDays={5}
+                />
+              </div>
 
               {/* CTA */}
               <div className="flex gap-3 mb-12">
-                <a
-                  href="https://accelerator.aiadvisoryboard.me/register?plan=trial"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="btn-primary"
-                >
+                <a href="/#pricing" className="btn-primary">
                   Спробувати безкоштовно
                 </a>
                 <a href="/#consultation" className="btn-secondary">
@@ -124,10 +190,7 @@ export default async function RolePage({ params }: Props) {
               {interviews.length > 0 && (
                 <>
                   <h2 className="text-h2 text-text mb-4">Сценарії з практики</h2>
-                  <p className="text-xs text-text-secondary mb-4 italic">
-                    * Імена змінено. Сценарії побудовані на основі типових ситуацій в галузі.
-                  </p>
-                  <div className="grid sm:grid-cols-2 gap-4 mb-12">
+                  <div className="grid sm:grid-cols-2 gap-4 mb-2">
                     {interviews.map((iv) => (
                       <Link
                         key={iv.id}
@@ -141,6 +204,26 @@ export default async function RolePage({ params }: Props) {
                           {iv.name}, {iv.jobTitle}
                         </p>
                       </Link>
+                    ))}
+                  </div>
+                  <p className="text-xs text-text-secondary mb-12 italic">
+                    * Імена змінено. Сценарії побудовані на основі типових ситуацій в галузі.
+                  </p>
+                </>
+              )}
+
+              {/* FAQ */}
+              {content?.faq && (
+                <>
+                  <h2 className="text-h2 text-text mb-4">Часті питання</h2>
+                  <div className="space-y-4 mb-12">
+                    {content.faq.map((item, i) => (
+                      <details key={i} className="border border-border rounded-lg">
+                        <summary className="px-5 py-4 cursor-pointer font-medium text-text hover:bg-surface-alt/50">
+                          {item.q}
+                        </summary>
+                        <p className="px-5 pb-4 text-text-secondary text-sm">{item.a}</p>
+                      </details>
                     ))}
                   </div>
                 </>
