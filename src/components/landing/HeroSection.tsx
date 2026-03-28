@@ -1,10 +1,15 @@
 "use client";
 
+import { useState } from "react";
 import { ACCELERATOR_URL } from "@/lib/constants";
+import { ConsultationModal } from "@/components/shared/ConsultationModal";
 
 export default function HeroSection() {
+  const [modalOpen, setModalOpen] = useState(false);
+
   return (
     <section className="section-padding pt-32 md:pt-40 bg-surface" id="hero">
+      <ConsultationModal open={modalOpen} onClose={() => setModalOpen(false)} />
       <div className="container-main">
         <div className="grid md:grid-cols-[55%_45%] gap-8 md:gap-12 items-center">
           {/* Left: Text */}
@@ -17,7 +22,7 @@ export default function HeroSection() {
               <br />
               компанію. Системно.
               <br />
-              <span className="text-primary">За 2 тижні.</span>
+              <span className="text-primary">За 5 днів.</span>
               <br />
               З результатом.
             </h1>
@@ -26,9 +31,9 @@ export default function HeroSection() {
               посади.
             </p>
             <div className="flex flex-col sm:flex-row gap-4">
-              <a href="#consultation" className="btn-primary">
+              <button onClick={() => setModalOpen(true)} className="btn-primary">
                 Замовити консультацію
-              </a>
+              </button>
               <a
                 href={`${ACCELERATOR_URL}/register?plan=trial`}
                 target="_blank"

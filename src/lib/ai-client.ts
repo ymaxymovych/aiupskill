@@ -49,7 +49,7 @@ export async function callOpenRouter(params: {
   messages.push({ role: "user", content: params.prompt });
 
   const controller = new AbortController();
-  const timeout = setTimeout(() => controller.abort(), 20000);
+  const timeout = setTimeout(() => controller.abort(), 60000);
 
   try {
     const response = await fetch(
