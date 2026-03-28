@@ -84,9 +84,10 @@ export function ConsultationModal({ open, onClose }: Props) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           name: form.name,
-          contact: form.email,
-          preferred_time: "",
+          contact: form.phone ? `${form.email}, ${form.phone}` : form.email,
+          preferred_time: form.task || "",
           company_url: form.website,
+          employee_count: form.teamSize,
           source: "consultation_modal",
         }),
       });
@@ -176,31 +177,31 @@ export function ConsultationModal({ open, onClose }: Props) {
                     <label className="text-gray-600 text-sm block mb-1">Ім&apos;я *</label>
                     <input type="text" required value={form.name}
                       onChange={(e) => setForm({ ...form, name: e.target.value })}
-                      className="input" placeholder="Ваше ім'я" />
+                      className="input-field" placeholder="Ваше ім'я" />
                   </div>
                   <div>
                     <label className="text-gray-600 text-sm block mb-1">Email *</label>
                     <input type="email" required value={form.email}
                       onChange={(e) => setForm({ ...form, email: e.target.value })}
-                      className="input" placeholder="email@company.com" />
+                      className="input-field" placeholder="email@company.com" />
                   </div>
                   <div>
                     <label className="text-gray-600 text-sm block mb-1">Телефон</label>
                     <input type="tel" value={form.phone}
                       onChange={(e) => setForm({ ...form, phone: e.target.value })}
-                      className="input" placeholder="+380..." />
+                      className="input-field" placeholder="+380..." />
                   </div>
                   <div>
                     <label className="text-gray-600 text-sm block mb-1">Сайт компанії</label>
                     <input type="url" value={form.website}
                       onChange={(e) => setForm({ ...form, website: e.target.value })}
-                      className="input" placeholder="https://yourcompany.com" />
+                      className="input-field" placeholder="https://yourcompany.com" />
                   </div>
                   <div>
                     <label className="text-gray-600 text-sm block mb-1">Кількість людей</label>
                     <select value={form.teamSize}
                       onChange={(e) => setForm({ ...form, teamSize: e.target.value })}
-                      className="input">
+                      className="input-field">
                       <option value="1-5">1-5</option>
                       <option value="6-20">6-20</option>
                       <option value="21-50">21-50</option>
@@ -211,7 +212,7 @@ export function ConsultationModal({ open, onClose }: Props) {
                     <label className="text-gray-600 text-sm block mb-1">Що хочете автоматизувати?</label>
                     <textarea rows={2} value={form.task}
                       onChange={(e) => setForm({ ...form, task: e.target.value })}
-                      className="input resize-none" placeholder="Опишіть коротко..." />
+                      className="input-field resize-none" placeholder="Опишіть коротко..." />
                   </div>
                   {error && <p className="text-red-500 text-sm">{error}</p>}
                   <button type="submit" disabled={submitting}
