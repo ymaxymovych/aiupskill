@@ -37,7 +37,7 @@ export function ConsultationModal({ open, onClose }: Props) {
 
   // Step 1: Audit
   const [website, setWebsite] = useState("");
-  const [teamSize, setTeamSize] = useState("5-9");
+  const [teamSize, setTeamSize] = useState(10);
   const [industry, setIndustry] = useState("");
   const [auditing, setAuditing] = useState(false);
   const [auditResult, setAuditResult] = useState<AuditResult | null>(null);
@@ -110,7 +110,7 @@ export function ConsultationModal({ open, onClose }: Props) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           website_url: website || undefined,
-          employee_count: parseInt(teamSize.split("-")[0]) || 5,
+          employee_count: teamSize,
           industry: industry,
         }),
       });
@@ -282,16 +282,10 @@ export function ConsultationModal({ open, onClose }: Props) {
                         </div>
                         <div>
                           <label className="text-gray-600 text-sm block mb-1">Кількість людей *</label>
-                          <select value={teamSize}
-                            onChange={(e) => setTeamSize(e.target.value)}
-                            className="input-field">
-                            <option value="1-4">1-4</option>
-                            <option value="5-9">5-9</option>
-                            <option value="10-19">10-19</option>
-                            <option value="20-49">20-49</option>
-                            <option value="50-99">50-99</option>
-                            <option value="100+">100+</option>
-                          </select>
+                          <input type="number" min={1} max={10000} value={teamSize}
+                            onChange={(e) => setTeamSize(Number(e.target.value) || 1)}
+                            required
+                            className="input-field" placeholder="22" />
                         </div>
                         <div>
                           <label className="text-gray-600 text-sm block mb-1">Галузь *</label>

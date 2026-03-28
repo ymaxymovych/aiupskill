@@ -24,17 +24,26 @@ export default function FirstWinSection() {
           )}
           style={{ transitionDelay: "150ms" }}
         >
-          Ваш співробітник ще не розуміє, що робить.
-          Але вже бачить: воно працює.
+          Ваш співробітник ще не розуміє, що саме він зробив.
+          Але автоматизація вже працює. Прямо перед ним.
+        </p>
+        <p
+          className={cn(
+            "text-body text-text italic animate-in",
+            isVisible && "visible"
+          )}
+          style={{ transitionDelay: "200ms" }}
+        >
+          &ldquo;Нічого собі, в мене получилось!&rdquo;
         </p>
         <p
           className={cn(
             "text-body text-text-secondary mt-2 font-medium animate-in",
             isVisible && "visible"
           )}
-          style={{ transitionDelay: "250ms" }}
+          style={{ transitionDelay: "300ms" }}
         >
-          Саме звідси береться мотивація дійти до кінця.
+          Саме цей момент створює мотивацію дійти до кінця.
         </p>
       </div>
     </section>

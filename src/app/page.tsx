@@ -8,6 +8,7 @@ import KeyboardJobsSection from "@/components/landing/KeyboardJobsSection";
 import NotChatGPT from "@/components/landing/NotChatGPT";
 import PotentialResourceSection from "@/components/landing/PotentialResourceSection";
 import CompetitivePressureSection from "@/components/landing/CompetitivePressureSection";
+import AuditWizard from "@/components/landing/AuditWizard";
 import ProductivityCalculator from "@/components/landing/ProductivityCalculator";
 import CourseProgram from "@/components/landing/CourseProgram";
 import ResearchStats from "@/components/landing/ResearchStats";
@@ -25,37 +26,38 @@ export default function Home() {
       <main>
         {/* 1. HERO */}
         <HeroSection />
-        {/* 2. 3 КРОКИ — одразу під hero, головне "м'ясо" */}
+        {/* 2. ❶❷❸ ТРИ КРОКИ — одразу під hero */}
         <RoadmapSection />
-        {/* 2b. Перша перемога за 30 хвилин */}
+        {/* 3. Перша перемога за 30 хвилин + McKinsey */}
         <FirstWinSection />
-        {/* 2c. McKinsey цитата: 80% не бачать результату */}
         <McKinseyQuote />
-        {/* 3. Чому 80% провалюють — розгорнуто */}
+        {/* 4. Чому 80% провалюють + 4 хрестики */}
         <ProblemBlock />
-        {/* 4. Будь-яка посада з клавіатурою */}
+        {/* 5. Будь-яка посада з клавіатурою */}
         <KeyboardJobsSection />
-        {/* 5. ChatGPT vs AI-агент */}
+        {/* 6. ChatGPT vs AI-агент */}
         <NotChatGPT />
-        {/* 6. Потенціал + Ресурс */}
+        {/* 7. Потенціал + Ресурс */}
         <PotentialResourceSection />
-        {/* 7. Конкурентний тиск */}
+        {/* 8. Конкурентний тиск */}
         <CompetitivePressureSection />
-        {/* 8. Калькулятор продуктивності */}
+        {/* 9. AI-аудит (форма на лендінгу — НЕ видаляти!) */}
+        <AuditWizard />
+        {/* 10. Калькулятор продуктивності (в гривнях) */}
         <ProductivityCalculator />
-        {/* 9. Модулі курсу */}
+        {/* 11. 5 модулів курсу */}
         <CourseProgram />
-        {/* 10. Дослідження */}
+        {/* 12. Дослідження (Anthropic, PwC, Stanford, +38%) */}
         <ResearchStats />
-        {/* 11. Про Ярослава */}
+        {/* 13. Про Ярослава (реальне фото!) */}
         <AuthorSection />
-        {/* 12. Ціни — бігунок */}
+        {/* 14. Ціни (бігунок в гривнях) */}
         <PricingSection />
-        {/* 13. Кейси по галузях */}
+        {/* 15. Кейси по галузях */}
         <IndustryCasesSection />
-        {/* 14. FAQ */}
+        {/* 16. FAQ */}
         <FaqSection />
-        {/* 15. CTA + Контакти */}
+        {/* 17. CTA + контакти */}
         <FooterCta />
       </main>
       <Footer />

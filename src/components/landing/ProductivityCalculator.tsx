@@ -167,16 +167,23 @@ export default function ProductivityCalculator() {
   const [routineHours, setRoutineHours] = useState(20);
 
   const data = ROLE_MULTIPLIERS[role];
-  const hourlyRate = salary / (4.3 * 40);
+  const hourlyRate = salary / 168; // грн/год (168 робочих годин/міс)
 
+  // B2.16: Консервативно — AI заощаджує 25% рутинного часу
+  const savedHoursWeekPerPerson = routineHours * 0.25;
+  const savedPerMonthPerPerson = savedHoursWeekPerPerson * 4.3 * hourlyRate;
+  const totalSavedPerMonth = savedPerMonthPerPerson * teamSize;
+
+  // Для візуалізації — старий розрахунок по множниках
   const conservativeSaved = routineHours * (1 - 1 / data.conservative) * teamSize;
   const optimisticSaved = routineHours * (1 - 1 / data.optimistic) * teamSize;
-
-  const conservativeYearlySavings = conservativeSaved * hourlyRate * 4.3 * 12;
+  const conservativeYearlySavings = totalSavedPerMonth * 12;
   const optimisticYearlySavings = optimisticSaved * hourlyRate * 4.3 * 12;
 
   const courseCost = teamSize * 2199; // грн/людину (середній тариф)
-  const paybackDays = Math.ceil(courseCost / (conservativeYearlySavings / 365));
+  const paybackDays = totalSavedPerMonth > 0
+    ? Math.ceil(courseCost / (totalSavedPerMonth / 30))
+    : 0;
   const effectiveTeam = Math.round(teamSize * data.optimistic);
 
   const routineAfterConservative = routineHours / data.conservative;
@@ -257,7 +264,7 @@ export default function ProductivityCalculator() {
               </div>
               <div className="flex justify-between text-text-secondary">
                 <span>Економія</span>
-                <span className="text-text font-bold">{Math.round(conservativeYearlySavings).toLocaleString("uk-UA")} грн/рік</span>
+                <span className="text-text font-bold">{Math.round(totalSavedPerMonth).toLocaleString("uk-UA")} грн/міс</span>
               </div>
             </div>
           </div>
@@ -275,7 +282,7 @@ export default function ProductivityCalculator() {
               </div>
               <div className="flex justify-between text-text-secondary">
                 <span>Економія</span>
-                <span className="text-text font-bold">{Math.round(optimisticYearlySavings).toLocaleString("uk-UA")} грн/рік</span>
+                <span className="text-text font-bold">{Math.round(optimisticYearlySavings / 12).toLocaleString("uk-UA")} грн/міс</span>
               </div>
             </div>
           </div>
@@ -328,7 +335,7 @@ export default function ProductivityCalculator() {
             Cornell 14-34% (customer support), IBM $4.5B (270K працівників), METR RCT (розробники)
           </p>
           <p>
-            Калькулятор показує потенціал на основі опублікованих досліджень.
+            Консервативний розрахунок: якщо кожен заощадить хоча б {Math.round(savedHoursWeekPerPerson * 10) / 10} години рутини на тиждень — курс окупається за ~{paybackDays} днів.
             Реальний результат залежить від складності задач і мотивації команди.
           </p>
         </div>

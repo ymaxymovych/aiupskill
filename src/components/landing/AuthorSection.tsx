@@ -26,7 +26,7 @@ export default function AuthorSection() {
             )}
           >
             <img
-              src="https://media.licdn.com/dms/image/v2/D4D03AQGjVYPqE3gBSg/profile-displayphoto-shrink_800_800/profile-displayphoto-shrink_800_800/0/1719350091498?e=1726099200&v=beta&t=placeholder"
+              src="/images/author.png"
               alt="Ярослав Максимович"
               className="w-full h-full object-cover"
               onError={(e) => {
