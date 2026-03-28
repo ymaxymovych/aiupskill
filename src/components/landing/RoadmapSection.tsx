@@ -125,16 +125,24 @@ export default function RoadmapSection() {
             </span>
             <div className="flex-1">
               <h3 className="text-xl md:text-2xl font-bold text-text mb-1">
-                ЗБИРАЙ ДАНІ ЩОДНЯ
+                ЗБЕРІТЬ ТЕ, ЧОГО AI ПРО ВАС НЕ ЗНАЄ
               </h3>
               <p className="text-sm text-text-secondary mb-3">
-                Кожен співробітник · 3 питання на день · Перший місяць безкоштовно
+                Перший місяць сервісу — безкоштовно
               </p>
-              <p className="text-body text-text-secondary mb-4">
-                Кожен співробітник щодня відповідає:
-                що зробив, що планує, яка допомога потрібна.
-                AI збирає відповіді від усіх і підказує керівнику.
-              </p>
+              <div className="text-body text-text-secondary mb-4 space-y-2">
+                <p>
+                  CRM зберігає клієнтів. ERP — фінанси. Але ніхто не зберігає головне:
+                  чим займається кожен співробітник щодня.
+                </p>
+                <p>
+                  Без цих даних AI не може підказати, що оптимізувати у вашій компанії.
+                </p>
+                <p>
+                  Три питання на день від кожного: що зробив, що планує, яка допомога потрібна.
+                  AI аналізує і підказує керівнику, де рухатись швидше.
+                </p>
+              </div>
               <a
                 href="https://aiadvisoryboard.me"
                 target="_blank"
