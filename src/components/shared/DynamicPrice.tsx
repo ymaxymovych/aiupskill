@@ -120,15 +120,15 @@ export default function DynamicPrice({
       <div className={`bg-white border border-gray-200 rounded-xl p-6 ${className}`}>
         <div className="grid grid-cols-2 gap-4 text-sm">
           <div>
-            <span className="text-gray-500">Вартість за людину</span>
+            <span className="text-gray-500">Вартість</span>
             <p className="text-lg font-semibold text-gray-900">
-              {isConsultation ? "Індивідуально" : formatUAH(pricePerPerson!)}
+              від {formatUAH(minPrice)}/люд
             </p>
           </div>
           <div>
-            <span className="text-gray-500">Загальна вартість</span>
+            <span className="text-gray-500">Доступ</span>
             <p className="text-lg font-semibold text-gray-900">
-              {isConsultation ? "За запитом" : formatUAH(totalPrice)}
+              12 місяців
             </p>
           </div>
           {showPayback && !isConsultation && (
