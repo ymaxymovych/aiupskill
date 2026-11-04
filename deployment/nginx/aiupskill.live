@@ -31,6 +31,7 @@ server {
     # SEC-49 (04.11.2026): see conf.d/aiupskill-ratelimit.conf
     location = /api/ai-audit {
         if ($aiupskill_scripted) { return 403; }
+        if ($aiupskill_foreign_origin) { return 403; }
         limit_req zone=aiupskill_audit_global burst=6 nodelay;
         limit_req zone=aiupskill_audit_ip burst=3 nodelay;
         limit_req_status 429;
@@ -45,6 +46,7 @@ server {
 
     location = /api/consultation-request {
         if ($aiupskill_scripted) { return 403; }
+        if ($aiupskill_foreign_origin) { return 403; }
         limit_req zone=aiupskill_lead_ip burst=3 nodelay;
         limit_req_status 429;
         proxy_pass http://localhost:3008;
