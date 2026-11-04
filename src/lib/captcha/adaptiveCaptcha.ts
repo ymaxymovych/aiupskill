@@ -24,6 +24,7 @@
  */
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
+import { EMAIL, TELEGRAM_URL } from "@/lib/constants";
 import { notifyCaptchaAlert } from "@/lib/telegram";
 import { isHostingIp } from "./hostingAsn";
 import { isSeclogProber } from "./seclogProbers";
@@ -94,6 +95,8 @@ export type CaptchaDeps = {
   alertDeduped: (key: string, text: string) => Promise<void>;
   enabled: () => Promise<boolean>;
   siteKey: () => string | null;
+  /** Чи заданий серверний секрет siteverify. Без нього режим не вмикається. */
+  secretConfigured: () => boolean;
   now: () => Date;
 };
 
@@ -123,8 +126,24 @@ export type CaptchaDecision =
         siteKey: string;
         action: string;
         error: string;
+        contact: CaptchaContact;
       };
     };
+
+/** Запасний контакт для людини, у якої віджет не завантажився (як у course, #4940 F5). */
+export type CaptchaContact = {
+  telegram: string;
+  telegramUrl: string;
+  phone: string;
+  phoneHref: string;
+};
+export const CAPTCHA_CONTACT: CaptchaContact = {
+  telegram: `@${TELEGRAM_URL.split("/").pop()}`,
+  telegramUrl: TELEGRAM_URL,
+  // Телефону на сайті немає — у цьому полі пошта (клієнт пише «напишіть на»).
+  phone: EMAIL,
+  phoneHref: `mailto:${EMAIL}`,
+};
 
 export const CAPTCHA_REQUIRED_TEXT =
   "Підтвердіть, що ви не робот, і надішліть форму ще раз.";
@@ -251,10 +270,18 @@ async function required(
 ): Promise<CaptchaDecision> {
   const siteKey = deps.siteKey();
   if (!siteKey) return failOpen(deps, hitId, form, "TURNSTILE_SITE_KEY не задано");
+  if (!deps.secretConfigured())
+    return failOpen(deps, hitId, form, "TURNSTILE_SECRET_KEY не задано");
   return {
     ok: false,
     status: 428,
-    body: { captchaRequired: true, siteKey, action: form, error: CAPTCHA_REQUIRED_TEXT },
+    body: {
+      captchaRequired: true,
+      siteKey,
+      action: form,
+      error: CAPTCHA_REQUIRED_TEXT,
+      contact: CAPTCHA_CONTACT,
+    },
   };
 }
 
@@ -429,10 +456,8 @@ export const defaultCaptchaDeps: CaptchaDeps = {
     await defaultCaptchaDeps.alert(text);
   },
   enabled: async () => process.env.ADAPTIVE_CAPTCHA_DISABLED !== "1",
-  siteKey: () =>
-    process.env.TURNSTILE_SECRET_KEY?.trim()
-      ? process.env.TURNSTILE_SITE_KEY?.trim() || null
-      : null,
+  siteKey: () => process.env.TURNSTILE_SITE_KEY?.trim() || null,
+  secretConfigured: () => !!process.env.TURNSTILE_SECRET_KEY?.trim(),
   now: () => new Date(),
 };
 
