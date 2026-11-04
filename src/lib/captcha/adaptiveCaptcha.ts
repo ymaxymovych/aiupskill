@@ -47,6 +47,14 @@ export const TOKEN_HEADER = "x-turnstile-token";
  */
 const OWN_PROXY_IPS = new Set(["77.42.36.142", "127.0.0.1", "::1"]);
 
+/** Форми з віджетом (= `action`). Маячок приймає лише їх (як у course, #4940 r3). */
+export const CAPTCHA_FORMS = ["aiupskill-consultation", "aiupskill-ai-audit"] as const;
+export type CaptchaForm = (typeof CAPTCHA_FORMS)[number];
+
+export function isCaptchaForm(value: string): value is CaptchaForm {
+  return (CAPTCHA_FORMS as readonly string[]).includes(value);
+}
+
 export type CaptchaReason = "volume" | "network" | "prober";
 
 export type CaptchaMode = { activeUntil: Date } | null;
@@ -245,6 +253,9 @@ export async function evaluateCaptcha(
 
   if (reason) {
     await deps.store.markAnomalous(input.form, since);
+    // Ключів немає — режим не вмикаємо взагалі: прийом з прапорцем і алертом.
+    const missing = missingKey(deps);
+    if (missing) return failOpen(deps, hitId, input.form, missing);
     const until = new Date(now.getTime() + MODE_HOLD_MS);
     const opened = await deps.store.trigger(input.form, until, reason);
     if (opened) {
@@ -263,15 +274,21 @@ export async function evaluateCaptcha(
     : { ok: true, mode: "off" };
 }
 
+function missingKey(deps: CaptchaDeps): string | null {
+  if (!deps.siteKey()) return "TURNSTILE_SITE_KEY не задано";
+  if (!deps.secretConfigured()) return "TURNSTILE_SECRET_KEY не задано";
+  return null;
+}
+
 async function required(
   deps: CaptchaDeps,
   hitId: string,
   form: string,
 ): Promise<CaptchaDecision> {
+  const missing = missingKey(deps);
   const siteKey = deps.siteKey();
-  if (!siteKey) return failOpen(deps, hitId, form, "TURNSTILE_SITE_KEY не задано");
-  if (!deps.secretConfigured())
-    return failOpen(deps, hitId, form, "TURNSTILE_SECRET_KEY не задано");
+  if (missing || !siteKey)
+    return failOpen(deps, hitId, form, missing ?? "TURNSTILE_SITE_KEY не задано");
   return {
     ok: false,
     status: 428,
@@ -467,7 +484,7 @@ export const defaultCaptchaDeps: CaptchaDeps = {
  */
 export async function requireAdaptiveCaptcha(
   req: Request,
-  form: string,
+  form: CaptchaForm,
   deps: CaptchaDeps = defaultCaptchaDeps,
 ): Promise<NextResponse | null> {
   const decision = await evaluateCaptcha(deps, {

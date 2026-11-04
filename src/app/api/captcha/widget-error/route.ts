@@ -4,16 +4,20 @@
  * Лише код і ім'я форми, ліміт за IP, алерт раз на годину на код. Капчу НЕ вимикає.
  */
 import { NextResponse } from "next/server";
-import { defaultCaptchaDeps } from "@/lib/captcha/adaptiveCaptcha";
+import { createHash } from "node:crypto";
+import { defaultCaptchaDeps, isCaptchaForm } from "@/lib/captcha/adaptiveCaptcha";
 
 // Лише коди конфігурації Turnstile — вигаданий код не породжує новий алерт.
 const CODE = /^(110[12]\d{2}|4000[27]0)$/;
-const ACTION = /^[a-z0-9-]{1,32}$/;
 const perIp = new Map<string, { count: number; resetAt: number }>();
 
 export async function POST(req: Request) {
   // nginx ставить X-Real-IP сам; перший X-Forwarded-For підробляє будь-хто.
-  const ip = req.headers.get("x-real-ip")?.trim() || "unknown";
+  // У пам'яті лімітера — хеш IP, а не сама адреса.
+  const ip = createHash("sha256")
+    .update(req.headers.get("x-real-ip")?.trim() || "unknown")
+    .digest("hex")
+    .slice(0, 16);
   const now = Date.now();
   const entry = perIp.get(ip);
   if (!entry || entry.resetAt < now) perIp.set(ip, { count: 1, resetAt: now + 3600_000 });
@@ -22,7 +26,7 @@ export async function POST(req: Request) {
   const body = (await req.json().catch(() => null)) as { code?: unknown; action?: unknown } | null;
   const code = typeof body?.code === "string" ? body.code : "";
   const action = typeof body?.action === "string" ? body.action : "";
-  if (!CODE.test(code) || !ACTION.test(action)) {
+  if (!CODE.test(code) || !isCaptchaForm(action)) {
     return NextResponse.json({ ok: false }, { status: 400 });
   }
   await defaultCaptchaDeps.alertDeduped(
