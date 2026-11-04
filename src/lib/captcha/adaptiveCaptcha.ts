@@ -15,7 +15,8 @@
  * У режимі сервер вимагає заголовок `x-turnstile-token` і перевіряє його через
  * siteverify разом з IP відвідувача. Без токена — 428 `{captchaRequired, siteKey}`;
  * клієнт (`fetchWithCaptcha.ts`) показує віджет і повторює запит сам.
- * Cloudflare недоступний або ключі не налаштовані → 503 «спробуйте за хвилину»
+ * Cloudflare недоступний або ключі не налаштовані → заявку ПРИЙМАЄМО з позначкою
+ * `captchaUnavailable` і алертом (як у course, гейт #4940 F5); явне «не пройдено» → 428.
  * (fail-closed). Поза режимом гейт лише рахує подання — форма працює як раніше.
  *
  * Сховище — та сама PostgreSQL aiupskill, що й `rateLimit.ts` (Redis у курсі немає).
@@ -60,6 +61,7 @@ export type CaptchaStore = {
   baselineMax(form: string, from: Date, to: Date): Promise<number>;
   markAnomalous(form: string, since: Date): Promise<void>;
   markVerified(hitId: string): Promise<void>;
+  markUnavailable(hitId: string): Promise<void>;
   getMode(form: string): Promise<CaptchaMode>;
   /** Продовжує режим; true рівно тоді, коли ЦЕЙ виклик відкрив новий епізод. */
   trigger(form: string, until: Date, reason: CaptchaReason): Promise<boolean>;
@@ -79,11 +81,17 @@ export type CaptchaStore = {
 
 export type CaptchaDeps = {
   store: CaptchaStore;
-  verify: (token: string, remoteIp: string | null) => Promise<TurnstileVerdict>;
+  verify: (
+    token: string,
+    remoteIp: string | null,
+    action: string,
+  ) => Promise<TurnstileVerdict>;
   isProber: (ip: string | null) => Promise<boolean>;
   /** Мережа дата-центру (`hostingAsn.ts`) — капча завжди, без режиму форми. */
   isHosting: (ip: string | null) => Promise<boolean>;
   alert: (text: string) => Promise<void>;
+  /** Той самий алерт, але не частіше разу на годину на `key`. */
+  alertDeduped: (key: string, text: string) => Promise<void>;
   enabled: () => Promise<boolean>;
   siteKey: () => string | null;
   now: () => Date;
@@ -106,18 +114,20 @@ export type CaptchaInput = {
 };
 
 export type CaptchaDecision =
-  | { ok: true; mode: "off" | "verified" }
+  | { ok: true; mode: "off" | "verified" | "unavailable" }
   | {
       ok: false;
       status: 428;
-      body: { captchaRequired: true; siteKey: string; error: string };
-    }
-  | { ok: false; status: 503; body: { error: string } };
+      body: {
+        captchaRequired: true;
+        siteKey: string;
+        action: string;
+        error: string;
+      };
+    };
 
 export const CAPTCHA_REQUIRED_TEXT =
   "Підтвердіть, що ви не робот, і надішліть форму ще раз.";
-export const CAPTCHA_UNAVAILABLE_TEXT =
-  "Не вдалося перевірити, що ви не робот. Спробуйте за хвилину.";
 
 /** Мережа для порогу: /24 для IPv4, /48 для IPv6; null — невідома або наш проксі. */
 export function networkOf(ip: string | null): string | null {
@@ -188,8 +198,11 @@ export async function evaluateCaptcha(
     const verdict = await deps.verify(
       input.token,
       trustIp && input.ip && !OWN_PROXY_IPS.has(input.ip) ? input.ip : null,
+      input.form,
     );
-    if (verdict.outcome === "unavailable") return unavailable();
+    if (verdict.outcome === "unavailable") {
+      return failOpen(deps, hitId, input.form, `siteverify: ${verdict.detail}`);
+    }
     if (verdict.outcome === "passed") {
       await deps.store.markVerified(hitId);
       return { ok: true, mode: "verified" };
@@ -223,29 +236,47 @@ export async function evaluateCaptcha(
           `Тримається 60 хв після останнього спрацювання.`,
       );
     }
-    return required(deps);
+    return required(deps, hitId, input.form);
   }
 
-  return active ? required(deps) : { ok: true, mode: "off" };
+  return active
+    ? required(deps, hitId, input.form)
+    : { ok: true, mode: "off" };
 }
 
-function required(deps: CaptchaDeps): CaptchaDecision {
+async function required(
+  deps: CaptchaDeps,
+  hitId: string,
+  form: string,
+): Promise<CaptchaDecision> {
   const siteKey = deps.siteKey();
-  if (!siteKey) {
-    console.error(
-      "[captcha] режим увімкнено, але ключі Turnstile не задано — відмовляю",
-    );
-    return unavailable();
-  }
+  if (!siteKey) return failOpen(deps, hitId, form, "TURNSTILE_SITE_KEY не задано");
   return {
     ok: false,
     status: 428,
-    body: { captchaRequired: true, siteKey, error: CAPTCHA_REQUIRED_TEXT },
+    body: { captchaRequired: true, siteKey, action: form, error: CAPTCHA_REQUIRED_TEXT },
   };
 }
 
-function unavailable(): CaptchaDecision {
-  return { ok: false, status: 503, body: { error: CAPTCHA_UNAVAILABLE_TEXT } };
+/** Капча потрібна, але перевірити неможливо: приймаємо, позначаємо, гучно алертимо. */
+async function failOpen(
+  deps: CaptchaDeps,
+  hitId: string,
+  form: string,
+  detail: string,
+): Promise<CaptchaDecision> {
+  console.error(`[captcha] перевірка недоступна (${detail}) — приймаю заявку «${form}» без капчі`);
+  await deps.store.markUnavailable(hitId);
+  try {
+    await deps.alertDeduped(
+      `captcha-unavailable:${detail.split(":")[0]}`,
+      `🚨 Капча Turnstile потрібна, але перевірка недоступна (${detail}). ` +
+        `Заявки на формі «${form}» приймаються БЕЗ капчі, доки це не полагоджено.`,
+    );
+  } catch (error) {
+    console.error("[captcha] алерт про недоступність не пішов", error);
+  }
+  return { ok: true, mode: "unavailable" };
 }
 
 async function safeAlert(deps: CaptchaDeps, text: string): Promise<void> {
@@ -310,11 +341,13 @@ export const prismaCaptchaStore: CaptchaStore = {
   async baselineMax(form, from, to) {
     const rows = await prisma.$queryRaw<{ max: bigint | null }[]>`
       SELECT MAX(c) AS "max" FROM (
-        SELECT COUNT(*) AS c
+        SELECT COUNT(*) OVER (
+          ORDER BY "createdAt"
+          RANGE BETWEEN CURRENT ROW AND INTERVAL '10 minutes' FOLLOWING
+        ) AS c
         FROM "PublicFormHit"
-        WHERE "form" = ${form} AND "anomalous" = false
+        WHERE "form" = ${form} AND "anomalous" = false AND "verified" = false
           AND "createdAt" >= ${from} AND "createdAt" < ${to}
-        GROUP BY FLOOR(EXTRACT(EPOCH FROM "createdAt") / 600)
       ) t
     `;
     return Number(rows[0]?.max ?? 0);
@@ -329,6 +362,12 @@ export const prismaCaptchaStore: CaptchaStore = {
     await prisma.publicFormHit.update({
       where: { id: hitId },
       data: { verified: true },
+    });
+  },
+  async markUnavailable(hitId) {
+    await prisma.publicFormHit.update({
+      where: { id: hitId },
+      data: { captchaUnavailable: true },
     });
   },
   async getMode(form) {
@@ -373,12 +412,22 @@ export const prismaCaptchaStore: CaptchaStore = {
   },
 };
 
+const unavailableAlertAt = new Map<string, number>();
+
 export const defaultCaptchaDeps: CaptchaDeps = {
   store: prismaCaptchaStore,
-  verify: (token, remoteIp) => verifyTurnstileToken(token, remoteIp),
+  verify: (token, remoteIp, action) =>
+    verifyTurnstileToken(token, remoteIp, action),
   isProber: isSeclogProber,
   isHosting: isHostingIp,
   alert: (text) => notifyCaptchaAlert(`${text} (aiupskill.live)`),
+  alertDeduped: async (key, text) => {
+    // Один процес pm2 — достатньо пам'яті процесу: раз на годину на причину.
+    const last = unavailableAlertAt.get(key) ?? 0;
+    if (Date.now() - last < 60 * 60_000) return;
+    unavailableAlertAt.set(key, Date.now());
+    await defaultCaptchaDeps.alert(text);
+  },
   enabled: async () => process.env.ADAPTIVE_CAPTCHA_DISABLED !== "1",
   siteKey: () =>
     process.env.TURNSTILE_SECRET_KEY?.trim()
@@ -389,7 +438,7 @@ export const defaultCaptchaDeps: CaptchaDeps = {
 
 /**
  * Гейт для роута публічної форми. Повертає `null`, коли заявку можна обробляти
- * далі, інакше — готову відповідь 428/503.
+ * далі, інакше — готову відповідь 428.
  */
 export async function requireAdaptiveCaptcha(
   req: Request,

@@ -146,6 +146,8 @@ model PublicFormHit {
   anomalous Boolean  @default(false)
   /// Подання з токеном Turnstile, який пройшов siteverify, — не рахується в пороги.
   verified  Boolean  @default(false)
+  /// Капча була потрібна, але перевірка недоступна — заявку прийнято без неї.
+  captchaUnavailable Boolean @default(false)
   createdAt DateTime @default(now())
 
   @@index([form, createdAt])

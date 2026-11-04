@@ -20,6 +20,7 @@ type TurnstileApi = {
     el: HTMLElement,
     opts: {
       sitekey: string;
+      action?: string;
       callback: (token: string) => void;
       "error-callback"?: () => void;
       "expired-callback"?: () => void;
@@ -59,7 +60,10 @@ function loadTurnstile(): Promise<TurnstileApi> {
 }
 
 /** Показати віджет; resolve(token) або resolve(null), якщо людина закрила вікно. */
-function solveTurnstile(siteKey: string): Promise<string | null> {
+function solveTurnstile(
+  siteKey: string,
+  action: string,
+): Promise<string | null> {
   return new Promise((resolve) => {
     const overlay = document.createElement("div");
     overlay.setAttribute("role", "dialog");
@@ -102,6 +106,7 @@ function solveTurnstile(siteKey: string): Promise<string | null> {
       .then((api) => {
         widgetId = api.render(box, {
           sitekey: siteKey,
+          action,
           language: document.documentElement.lang || "auto",
           callback: (token) => done(token),
           "error-callback": () => {
@@ -120,15 +125,21 @@ function solveTurnstile(siteKey: string): Promise<string | null> {
   });
 }
 
-async function captchaSiteKey(res: Response): Promise<string | null> {
+/** Сервер просить капчу: ключ сайту й `action` форми, інакше null. */
+async function captchaChallenge(
+  res: Response,
+): Promise<{ siteKey: string; action: string } | null> {
   if (res.status !== 428) return null;
   try {
     const data = (await res.clone().json()) as {
       captchaRequired?: unknown;
       siteKey?: unknown;
+      action?: unknown;
     };
-    return data.captchaRequired === true && typeof data.siteKey === "string"
-      ? data.siteKey
+    return data.captchaRequired === true &&
+      typeof data.siteKey === "string" &&
+      typeof data.action === "string"
+      ? { siteKey: data.siteKey, action: data.action }
       : null;
   } catch {
     return null;
@@ -141,9 +152,9 @@ export async function fetchWithCaptcha(
 ): Promise<Response> {
   let res = await fetch(input, init);
   for (let attempt = 0; attempt < MAX_ATTEMPTS; attempt++) {
-    const siteKey = await captchaSiteKey(res);
-    if (!siteKey) return res;
-    const token = await solveTurnstile(siteKey);
+    const challenge = await captchaChallenge(res);
+    if (!challenge) return res;
+    const token = await solveTurnstile(challenge.siteKey, challenge.action);
     if (!token) return res;
     const headers = new Headers(init.headers);
     headers.set(TOKEN_HEADER, token);

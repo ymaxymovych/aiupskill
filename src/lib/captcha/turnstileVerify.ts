@@ -14,6 +14,12 @@ export const SITEVERIFY_URL =
   "https://challenges.cloudflare.com/turnstile/v0/siteverify";
 const TIMEOUT_MS = 5_000;
 
+/** Сторінки з віджетом: токен із чужого сайту з тим самим ключем не приймаємо. */
+export const ALLOWED_HOSTNAMES: ReadonlySet<string> = new Set([
+  "aiupskill.live",
+  "www.aiupskill.live",
+]);
+
 export type TurnstileVerdict =
   | { outcome: "passed" }
   | { outcome: "failed"; errorCodes: string[] }
@@ -22,9 +28,12 @@ export type TurnstileVerdict =
 export async function verifyTurnstileToken(
   token: string,
   remoteIp: string | null,
+  /** `action` віджета — ім'я форми, яке сервер передав у 428. */
+  expectedAction: string,
   opts: {
     secret?: string | null;
     fetchImpl?: typeof fetch;
+    allowedHostnames?: ReadonlySet<string>;
   } = {},
 ): Promise<TurnstileVerdict> {
   const secret =
@@ -64,13 +73,30 @@ export async function verifyTurnstileToken(
     return { outcome: "unavailable", detail: `http_${res.status}` };
   }
 
-  let data: { success?: unknown; "error-codes"?: unknown };
+  let data: {
+    success?: unknown;
+    "error-codes"?: unknown;
+    hostname?: unknown;
+    action?: unknown;
+  } | null;
   try {
     data = (await res.json()) as typeof data;
   } catch {
     return { outcome: "unavailable", detail: "bad_json" };
   }
-  if (data.success === true) return { outcome: "passed" };
+  if (!data || typeof data !== "object") {
+    return { outcome: "unavailable", detail: "bad_json" };
+  }
+  if (data.success === true) {
+    const hosts = opts.allowedHostnames ?? ALLOWED_HOSTNAMES;
+    if (typeof data.hostname !== "string" || !hosts.has(data.hostname)) {
+      return { outcome: "failed", errorCodes: ["foreign-hostname"] };
+    }
+    if (data.action !== expectedAction) {
+      return { outcome: "failed", errorCodes: ["wrong-action"] };
+    }
+    return { outcome: "passed" };
+  }
 
   const errorCodes = Array.isArray(data["error-codes"])
     ? data["error-codes"].filter((c): c is string => typeof c === "string")
