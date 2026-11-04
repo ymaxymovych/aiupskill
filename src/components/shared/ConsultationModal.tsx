@@ -1,4 +1,5 @@
 "use client";
+import { fetchWithCaptcha } from "@/lib/captcha/fetchWithCaptcha";
 import { useState, useEffect, useCallback } from "react";
 
 const CALENDLY_URL = "https://calendly.com/yaroslav-maxymovych";
@@ -104,8 +105,9 @@ export function ConsultationModal({ open, onClose }: Props) {
   const runAudit = useCallback(async () => {
     if (!industry) return;
     setAuditing(true);
+    setError("");
     try {
-      const res = await fetch("/api/ai-audit", {
+      const res = await fetchWithCaptcha("/api/ai-audit", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -131,32 +133,11 @@ export function ConsultationModal({ open, onClose }: Props) {
         }));
         setStep(2);
       } else {
-        // Fallback result
-        setAuditResult({
-          recommendations: [
-            "Автоматизація звітності — ~8 год/тижд",
-            "AI-кваліфікація лідів — ~12 год/тижд",
-            "Генерація контенту — ~6 год/тижд",
-          ],
-          totalHoursSaved: 26,
-          pricePerPerson: 2199,
-          paybackDays: 5,
-        });
-        setStep(2);
+        const data = await res.json();
+        setError(data.error || "Помилка аналізу. Спробуйте ще раз.");
       }
     } catch {
-      // Fallback on error
-      setAuditResult({
-        recommendations: [
-          "Автоматизація звітності — ~8 год/тижд",
-          "AI-кваліфікація лідів — ~12 год/тижд",
-          "Генерація контенту — ~6 год/тижд",
-        ],
-        totalHoursSaved: 26,
-        pricePerPerson: 2199,
-        paybackDays: 5,
-      });
-      setStep(2);
+      setError("Помилка з'єднання. Спробуйте ще раз.");
     } finally {
       setAuditing(false);
     }
@@ -168,7 +149,7 @@ export function ConsultationModal({ open, onClose }: Props) {
     setSubmitting(true);
     setError("");
     try {
-      const res = await fetch("/api/consultation-request", {
+      const res = await fetchWithCaptcha("/api/consultation-request", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -305,6 +286,7 @@ export function ConsultationModal({ open, onClose }: Props) {
                         >
                           {auditing ? "Аналізуємо..." : "Розрахувати потенціал AI →"}
                         </button>
+                        {error && <p className="text-red-500 text-sm" role="alert">{error}</p>}
                       </div>
                     </div>
                   )}

@@ -1,3 +1,4 @@
+import { requireAdaptiveCaptcha } from "@/lib/captcha/adaptiveCaptcha";
 import { NextResponse } from "next/server";
 import { callOpenRouter, parseJSONFromAI } from "@/lib/ai-client";
 import {
@@ -63,6 +64,9 @@ export async function POST(req: Request) {
         { status: 429 }
       );
     }
+
+    const captchaResponse = await requireAdaptiveCaptcha(req, "aiupskill-ai-audit");
+    if (captchaResponse) return captchaResponse;
 
     const body = await req.json();
     const websiteUrl = body.website_url ? sanitize(body.website_url, 500) : null;

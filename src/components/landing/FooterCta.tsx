@@ -1,4 +1,5 @@
 "use client";
+import { fetchWithCaptcha } from "@/lib/captcha/fetchWithCaptcha";
 
 import { useState, useEffect } from "react";
 import { useIntersection } from "@/hooks/useIntersection";
@@ -24,6 +25,7 @@ export default function FooterCta() {
     "idle"
   );
   const [errors, setErrors] = useState<Partial<Record<keyof FormData, string>>>({});
+  const [error, setError] = useState("");
 
   // Pre-fill from audit wizard localStorage
   useEffect(() => {
@@ -60,6 +62,7 @@ export default function FooterCta() {
     if (!validate()) return;
 
     setStatus("sending");
+    setError("");
 
     // Get audit data from localStorage if available
     let auditResult = null;
@@ -74,7 +77,7 @@ export default function FooterCta() {
     } catch {}
 
     try {
-      const res = await fetch("/api/consultation-request", {
+      const res = await fetchWithCaptcha("/api/consultation-request", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -91,9 +94,12 @@ export default function FooterCta() {
       if (res.ok) {
         setStatus("sent");
       } else {
+        const data = await res.json();
+        setError(data.error || "Щось пішло не так. Спробуйте ще раз.");
         setStatus("error");
       }
     } catch {
+      setError("Помилка з'єднання. Спробуйте ще раз.");
       setStatus("error");
     }
   };
@@ -236,7 +242,7 @@ export default function FooterCta() {
 
           {status === "error" && (
             <p className="text-error text-center text-sm">
-              Щось пішло не так. Спробуйте ще раз або напишіть у{" "}
+              {error} Або напишіть у{" "}
               <a
                 href={TELEGRAM_URL}
                 target="_blank"

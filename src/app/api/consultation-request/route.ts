@@ -1,3 +1,4 @@
+import { requireAdaptiveCaptcha } from "@/lib/captcha/adaptiveCaptcha";
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
 import { notifyTelegram } from "@/lib/telegram";
@@ -26,6 +27,9 @@ export async function POST(req: Request) {
       // Silent rate limit: show success but don't notify
       return NextResponse.json({ status: "ok", message: "Заявку отримано" });
     }
+
+    const captchaResponse = await requireAdaptiveCaptcha(req, "aiupskill-consultation");
+    if (captchaResponse) return captchaResponse;
 
     const body = await req.json();
     const { name, contact, preferred_time, company_url, employee_count, audit_result, source } = body;

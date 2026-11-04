@@ -1,3 +1,23 @@
+export async function notifyCaptchaAlert(text: string): Promise<void> {
+  const token = process.env.TELEGRAM_BOT_TOKEN;
+  if (!token) throw new Error("TELEGRAM_BOT_TOKEN не задано для алерта капчі");
+
+  const response = await fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      chat_id: process.env.CAPTCHA_ALERT_CHAT_ID || "-1003557288154",
+      message_thread_id: Number(process.env.CAPTCHA_ALERT_THREAD_ID || 8),
+      text,
+    }),
+    signal: AbortSignal.timeout(5_000),
+  });
+  const result = (await response.json()) as { ok?: boolean };
+  if (!response.ok || result.ok !== true) {
+    throw new Error("Telegram не прийняв алерт капчі");
+  }
+}
+
 export async function notifyTelegram(data: {
   name: string;
   contact: string;

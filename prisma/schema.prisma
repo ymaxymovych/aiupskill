@@ -134,3 +134,31 @@ model B2BRolePage {
   @@map("b2b_role_pages")
   @@unique([industrySlug, roleSlug])
 }
+
+
+// Адаптивна капча: подання форм і поточні режими Turnstile.
+model PublicFormHit {
+  id        String   @id @default(cuid())
+  form      String
+  /// Мережа /24 (IPv4) або /48 (IPv6); null — адреса невідома або це наш проксі.
+  net       String?
+  /// Подання з вікна, яке ввімкнуло режим, — не входить у «звичний максимум».
+  anomalous Boolean  @default(false)
+  /// Подання з токеном Turnstile, який пройшов siteverify, — не рахується в пороги.
+  verified  Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  @@index([form, createdAt])
+  @@index([createdAt])
+}
+
+/// Режим «потрібна капча» для однієї форми. Активний, поки `activeUntil` у
+/// майбутньому; `episodeOpen` — чи вже надіслано алерт увімкнення без вимкнення.
+model PublicFormCaptchaMode {
+  form             String    @id
+  activeUntil      DateTime
+  reason           String
+  episodeOpen      Boolean   @default(false)
+  episodeStartedAt DateTime?
+  updatedAt        DateTime  @updatedAt
+}

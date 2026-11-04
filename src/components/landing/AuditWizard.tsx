@@ -1,4 +1,5 @@
 "use client";
+import { fetchWithCaptcha } from "@/lib/captcha/fetchWithCaptcha";
 
 import { useState, useEffect } from "react";
 import { useIntersection } from "@/hooks/useIntersection";
@@ -104,7 +105,7 @@ export default function AuditWizard() {
 
     try {
       const [res] = await Promise.all([
-        fetch("/api/ai-audit", {
+        fetchWithCaptcha("/api/ai-audit", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
