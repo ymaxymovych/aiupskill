@@ -6,7 +6,8 @@
 import { NextResponse } from "next/server";
 import { defaultCaptchaDeps } from "@/lib/captcha/adaptiveCaptcha";
 
-const CODE = /^[0-9a-z_-]{1,32}$/i;
+// Лише коди конфігурації Turnstile — вигаданий код не породжує новий алерт.
+const CODE = /^(110[12]\d{2}|4000[27]0)$/;
 const ACTION = /^[a-z0-9-]{1,32}$/;
 const perIp = new Map<string, { count: number; resetAt: number }>();
 
@@ -25,7 +26,8 @@ export async function POST(req: Request) {
     return NextResponse.json({ ok: false }, { status: 400 });
   }
   await defaultCaptchaDeps.alertDeduped(
-    `captcha-widget-error:${code}`,
+    // Один ключ на всі коди: щонайбільше один алерт на годину, скільки б IP не прийшло.
+    "captcha-widget-error",
     `⚠️ Віджет Turnstile не видає токен (код ${code}, форма «${action}») — ` +
       `перевір TURNSTILE_SITE_KEY і домени віджета в Cloudflare. ` +
       `Людям показано запасний контакт; капча при цьому не вимкнена.`,
