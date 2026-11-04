@@ -58,15 +58,17 @@ export async function POST(req: Request) {
   try {
     // nginx ставить X-Real-IP сам; перший X-Forwarded-For підробляє будь-хто.
     const ip = req.headers.get("x-real-ip")?.trim() || "unknown";
+    // Капча — ДО ліміту за IP: інакше відповідь 428 і повтор із токеном з'їдають
+    // ліміт, і справжня заявка після капчі мовчки губиться (живий прогін 04.11).
+    const captchaResponse = await requireAdaptiveCaptcha(req, "aiupskill-ai-audit");
+    if (captchaResponse) return captchaResponse;
+
     if (!checkRateLimit(ip)) {
       return NextResponse.json(
         { error: "Забагато запитів. Спробуйте через годину." },
         { status: 429 }
       );
     }
-
-    const captchaResponse = await requireAdaptiveCaptcha(req, "aiupskill-ai-audit");
-    if (captchaResponse) return captchaResponse;
 
     const body = await req.json();
     const websiteUrl = body.website_url ? sanitize(body.website_url, 500) : null;
