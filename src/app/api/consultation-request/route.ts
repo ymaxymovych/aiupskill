@@ -19,7 +19,8 @@ function checkRateLimit(ip: string): boolean {
 
 export async function POST(req: Request) {
   try {
-    const ip = req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || "unknown";
+    // nginx ставить X-Real-IP сам; перший X-Forwarded-For підробляє будь-хто.
+    const ip = req.headers.get("x-real-ip")?.trim() || "unknown";
 
     if (!checkRateLimit(ip)) {
       // Silent rate limit: show success but don't notify

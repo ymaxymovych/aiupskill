@@ -6,6 +6,7 @@ import {
   type DepartmentCode,
   type IndustryCode,
 } from "@/lib/automations-db";
+import { fetchPublicPage } from "@/lib/safe-fetch";
 
 const rateLimitMap = new Map<string, { count: number; resetAt: number }>();
 
@@ -54,7 +55,8 @@ const DEFAULT_DEPARTMENTS: { code: DepartmentCode; name: string; ratio: number }
 
 export async function POST(req: Request) {
   try {
-    const ip = req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || "unknown";
+    // nginx ставить X-Real-IP сам; перший X-Forwarded-For підробляє будь-хто.
+    const ip = req.headers.get("x-real-ip")?.trim() || "unknown";
     if (!checkRateLimit(ip)) {
       return NextResponse.json(
         { error: "Забагато запитів. Спробуйте через годину." },
@@ -77,14 +79,7 @@ export async function POST(req: Request) {
     // Fetch website if provided
     if (websiteUrl && /^https?:\/\//.test(websiteUrl)) {
       try {
-        const controller = new AbortController();
-        const timeout = setTimeout(() => controller.abort(), 10000);
-        const siteRes = await fetch(websiteUrl, {
-          signal: controller.signal,
-          headers: { "User-Agent": "Mozilla/5.0 (compatible; AIUpskillBot/1.0)" },
-        });
-        clearTimeout(timeout);
-        companyContext = stripHtml(await siteRes.text());
+        companyContext = stripHtml(await fetchPublicPage(websiteUrl));
       } catch {
         // Website fetch failed, proceed without context
       }
