@@ -24,6 +24,7 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
 import { notifyCaptchaAlert } from "@/lib/telegram";
+import { isHostingIp } from "./hostingAsn";
 import { isSeclogProber } from "./seclogProbers";
 import { verifyTurnstileToken, type TurnstileVerdict } from "./turnstileVerify";
 
@@ -65,7 +66,14 @@ export type CaptchaStore = {
   /** Закриває прострочені епізоди; повертає кожен закритий рівно один раз. */
   closeExpired(
     now: Date,
-  ): Promise<{ form: string; reason: string; startedAt: Date | null }[]>;
+  ): Promise<
+    {
+      form: string;
+      reason: string;
+      startedAt: Date | null;
+      activeUntil: Date;
+    }[]
+  >;
   prune(before: Date): Promise<void>;
 };
 
@@ -73,6 +81,8 @@ export type CaptchaDeps = {
   store: CaptchaStore;
   verify: (token: string, remoteIp: string | null) => Promise<TurnstileVerdict>;
   isProber: (ip: string | null) => Promise<boolean>;
+  /** Мережа дата-центру (`hostingAsn.ts`) — капча завжди, без режиму форми. */
+  isHosting: (ip: string | null) => Promise<boolean>;
   alert: (text: string) => Promise<void>;
   enabled: () => Promise<boolean>;
   siteKey: () => string | null;
@@ -157,7 +167,15 @@ export async function evaluateCaptcha(
   const net = trustIp ? networkOf(input.ip) : null;
   const hitId = await deps.store.recordHit(input.form, net, now);
   const mode = await deps.store.getMode(input.form);
-  const active = !!mode && mode.activeUntil > now;
+  const modeActive = !!mode && mode.activeUntil > now;
+  // Хостингова мережа — постійний тригер для ЦЬОГО запиту: режим форми не
+  // вмикає й алертів не шле, лише вимагає токен.
+  const hosting =
+    trustIp &&
+    !!input.ip &&
+    !OWN_PROXY_IPS.has(input.ip) &&
+    (await deps.isHosting(input.ip));
+  const active = modeActive || hosting;
 
   if (active && input.preVerified) {
     await deps.store.markVerified(hitId);
@@ -238,22 +256,35 @@ async function safeAlert(deps: CaptchaDeps, text: string): Promise<void> {
   }
 }
 
+/**
+ * Текст алерту вимкнення. Природне вимкнення — `activeUntil` щонайменше на
+ * 60 хв пізніше за початок епізоду (кожне спрацювання ставить «зараз + 60 хв»).
+ * Коротше — строк зсунули вручну, і текст каже це прямо. Ручні тестові
+ * вмикання (`reason` = `manual…`) позначаються «[TEST]».
+ */
+export function offAlertText(
+  c: { form: string; reason: string; startedAt: Date | null; activeUntil: Date },
+  now: Date,
+): string {
+  const test = /^(manual|test)/i.test(c.reason) ? "[TEST] " : "";
+  const lasted = c.startedAt
+    ? ` Режим діяв ${Math.round((now.getTime() - c.startedAt.getTime()) / 60_000)} хв.`
+    : "";
+  const natural =
+    !c.startedAt ||
+    c.activeUntil.getTime() - c.startedAt.getTime() >= MODE_HOLD_MS - 60_000;
+  return natural
+    ? `${test}✅ Капча Turnstile вимкнена на формі «${c.form}»: після останньої аномалії минуло 60 хв, нових не було.${lasted}`
+    : `${test}✅ Капча Turnstile вимкнена на формі «${c.form}» достроково — строк режиму скорочено вручну.${lasted}`;
+}
+
 /** Закрити прострочені режими й повідомити про кожне вимкнення рівно раз. */
 export async function closeExpiredModes(
   deps: Pick<CaptchaDeps, "store" | "alert">,
   now: Date,
 ): Promise<number> {
   const closed = await deps.store.closeExpired(now);
-  for (const c of closed) {
-    const minutes = c.startedAt
-      ? Math.round((now.getTime() - c.startedAt.getTime()) / 60_000)
-      : null;
-    await safeAlert(
-      deps as CaptchaDeps,
-      `✅ Капча Turnstile вимкнена на формі «${c.form}»: 60 хв без аномалій` +
-        (minutes !== null ? ` (режим тривав ${minutes} хв).` : "."),
-    );
-  }
+  for (const c of closed) await safeAlert(deps as CaptchaDeps, offAlertText(c, now));
   return closed.length;
 }
 
@@ -322,12 +353,17 @@ export const prismaCaptchaStore: CaptchaStore = {
   },
   async closeExpired(now) {
     return prisma.$queryRaw<
-      { form: string; reason: string; startedAt: Date | null }[]
+      {
+        form: string;
+        reason: string;
+        startedAt: Date | null;
+        activeUntil: Date;
+      }[]
     >`
       UPDATE "PublicFormCaptchaMode"
       SET "episodeOpen" = false, "updatedAt" = ${now}
       WHERE "episodeOpen" = true AND "activeUntil" <= ${now}
-      RETURNING "form", "reason", "episodeStartedAt" AS "startedAt"
+      RETURNING "form", "reason", "episodeStartedAt" AS "startedAt", "activeUntil"
     `;
   },
   async prune(before) {
@@ -341,6 +377,7 @@ export const defaultCaptchaDeps: CaptchaDeps = {
   store: prismaCaptchaStore,
   verify: (token, remoteIp) => verifyTurnstileToken(token, remoteIp),
   isProber: isSeclogProber,
+  isHosting: isHostingIp,
   alert: (text) => notifyCaptchaAlert(`${text} (aiupskill.live)`),
   enabled: async () => process.env.ADAPTIVE_CAPTCHA_DISABLED !== "1",
   siteKey: () =>
