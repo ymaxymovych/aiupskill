@@ -1,6 +1,6 @@
 import { requireAdaptiveCaptcha } from "@/lib/captcha/adaptiveCaptcha";
 import { NextResponse } from "next/server";
-import { callOpenRouter, parseJSONFromAI } from "@/lib/ai-client";
+import { callGateway, LLMGatewayError, parseJSONFromAI } from "@/lib/ai-client";
 import {
   AUTOMATIONS,
   selectTopAutomations,
@@ -124,7 +124,7 @@ export async function POST(req: Request) {
   ]
 }`;
 
-        const aiResponse = await callOpenRouter({
+        const aiResponse = await callGateway({
           systemPrompt: "You are an AI business analyst. Always respond in Ukrainian. Respond ONLY with valid JSON.",
           prompt,
           maxTokens: 1000,
@@ -148,6 +148,7 @@ export async function POST(req: Request) {
           icon: d.icon || "",
         }));
       } catch (e) {
+        if (e instanceof LLMGatewayError) throw e;
         console.error("AI company parse error:", e);
       }
     }
