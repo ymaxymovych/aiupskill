@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
-import { callOpenRouter, parseJSONFromAI } from "@/lib/ai-client";
+import { callGateway, parseJSONFromAI } from "@/lib/ai-client";
 
 // Full 150 automations from TZ C6.4
 const AUTOMATIONS_LIST = [
@@ -194,7 +194,7 @@ const SYSTEM_PROMPT = `Ти генеруєш контент для сторін�
 export async function POST(req: Request) {
   const { secret, batchSize = 5, offset = 0 } = await req.json();
 
-  if (secret !== process.env.OPENROUTER_API_KEY?.slice(0, 10)) {
+  if (!process.env.GENERATION_API_SECRET || secret !== process.env.GENERATION_API_SECRET) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
@@ -233,7 +233,7 @@ JSON:
   "tools": ["n8n", "Claude API", "..."]
 }`;
 
-      const aiResponse = await callOpenRouter({
+      const aiResponse = await callGateway({
         prompt,
         systemPrompt: SYSTEM_PROMPT,
         maxTokens: 2000,
@@ -261,6 +261,7 @@ JSON:
 
       results.push({ name: auto.name, slug, status: "created" });
     } catch (error) {
+      console.error("ERROR: Automation generation failed", error);
       results.push({
         name: auto.name,
         slug,

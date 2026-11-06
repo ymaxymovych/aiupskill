@@ -34,14 +34,20 @@ export function parseJSONFromAI<T = unknown>(text: string): T {
   throw new Error("Failed to parse JSON from AI response");
 }
 
-export async function callOpenRouter(params: {
+export class LLMGatewayError extends Error {}
+
+export async function callGateway(params: {
   prompt: string;
   systemPrompt?: string;
   maxTokens?: number;
   temperature?: number;
 }): Promise<string> {
-  const apiKey = process.env.OPENROUTER_API_KEY;
-  if (!apiKey) throw new Error("OPENROUTER_API_KEY not set");
+  const base = process.env.LLM_GATEWAY_URL?.trim().replace(/\/+$/, "");
+  const apiKey = process.env.LLM_GATEWAY_KEY?.trim();
+  if (!base || !apiKey) {
+    throw new LLMGatewayError("LLM_GATEWAY_URL and LLM_GATEWAY_KEY are required");
+  }
+  const endpoint = `${base.endsWith("/v1") ? base : `${base}/v1`}/chat/completions`;
 
   const messages: { role: string; content: string }[] = [];
   if (params.systemPrompt)
@@ -53,32 +59,48 @@ export async function callOpenRouter(params: {
 
   try {
     const response = await fetch(
-      "https://openrouter.ai/api/v1/chat/completions",
+      endpoint,
       {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${apiKey}`,
-          "HTTP-Referer":
-            process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3006",
         },
         body: JSON.stringify({
-          model: "google/gemini-2.0-flash-001",
+          // All current callers require structured JSON, including SEO content.
+          model: "nemotron-super",
           messages,
-          max_tokens: params.maxTokens || 2000,
-          temperature: params.temperature || 0.7,
+          max_tokens: params.maxTokens ?? 2000,
+          temperature: params.temperature ?? 0.7,
+          response_format: { type: "json_object" },
+          stream: false,
+          reasoning: { enabled: false },
+          chat_template_kwargs: { enable_thinking: false },
         }),
         signal: controller.signal,
+        redirect: "error",
       }
     );
 
     if (!response.ok) {
-      const error = await response.json();
-      throw new Error(error.error?.message || "OpenRouter API error");
+      // Do not relay upstream bodies: they can contain credentials or prompts.
+      throw new LLMGatewayError(`LLM gateway HTTP ${response.status}`);
     }
 
     const data = await response.json();
-    return data.choices[0].message.content;
+    const content = data.choices?.[0]?.message?.content;
+    if (typeof content !== "string" || !content.trim()) {
+      throw new LLMGatewayError("LLM gateway returned empty or invalid content");
+    }
+    if (data.choices[0].finish_reason === "length") {
+      throw new LLMGatewayError("LLM gateway response was truncated");
+    }
+    return content;
+  } catch (error) {
+    if (error instanceof LLMGatewayError) throw error;
+    throw new LLMGatewayError(
+      controller.signal.aborted ? "LLM gateway request timed out" : "LLM gateway request failed",
+    );
   } finally {
     clearTimeout(timeout);
   }

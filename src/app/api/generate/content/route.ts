@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
-import { callOpenRouter, parseJSONFromAI } from "@/lib/ai-client";
+import { callGateway, parseJSONFromAI } from "@/lib/ai-client";
 
 const INDUSTRIES = [
   { slug: "e-commerce", name: "E-commerce / Інтернет-магазин", dbCode: "ecommerce" },
@@ -59,13 +59,14 @@ JSON:
 }`;
 
   try {
-    const response = await callOpenRouter({ prompt, systemPrompt: SYSTEM, maxTokens: 3000, temperature: 0.7 });
+    const response = await callGateway({ prompt, systemPrompt: SYSTEM, maxTokens: 3000, temperature: 0.7 });
     const content = parseJSONFromAI(response);
     await prisma.b2BIndustryHub.create({
       data: { slug: ind.slug, name: ind.name, emoji: "", content: content as object },
     });
     return { slug: ind.slug, status: "created" };
   } catch (e) {
+    console.error("ERROR: Industry hub generation failed", e);
     return { slug: ind.slug, status: `error: ${e instanceof Error ? e.message : "unknown"}` };
   }
 }
@@ -111,13 +112,14 @@ JSON:
 }`;
 
   try {
-    const response = await callOpenRouter({ prompt, systemPrompt: SYSTEM, maxTokens: 3000, temperature: 0.7 });
+    const response = await callGateway({ prompt, systemPrompt: SYSTEM, maxTokens: 3000, temperature: 0.7 });
     const content = parseJSONFromAI(response);
     await prisma.b2BRolePage.create({
       data: { industrySlug: ind.slug, roleSlug: role.slug, content: content as object },
     });
     return { key: `${ind.slug}/${role.slug}`, status: "created" };
   } catch (e) {
+    console.error("ERROR: Role page generation failed", e);
     return { key: `${ind.slug}/${role.slug}`, status: `error: ${e instanceof Error ? e.message : "unknown"}` };
   }
 }
@@ -125,7 +127,7 @@ JSON:
 export async function POST(req: Request) {
   const { secret, type, batchSize = 5, offset = 0 } = await req.json();
 
-  if (secret !== process.env.OPENROUTER_API_KEY?.slice(0, 10)) {
+  if (!process.env.GENERATION_API_SECRET || secret !== process.env.GENERATION_API_SECRET) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
